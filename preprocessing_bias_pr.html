@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>preprocessing_bias_pr</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d4be639c637f3db3c684c66cefad7e0c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<div id="cell-0" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timedelta</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sys.path.insert(<span class="dv">0</span>, <span class="st">'../'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Datasets</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.datasets <span class="im">import</span> MEPSDataset19</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.datasets <span class="im">import</span> CompasDataset</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Fairness metrics</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.metrics <span class="im">import</span> BinaryLabelDatasetMetric</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Explainers</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.explainers <span class="im">import</span> MetricTextExplainer</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Scalers</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Bias mitigation techniques</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.algorithms.preprocessing <span class="im">import</span> Reweighing,DisparateImpactRemover</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.algorithms.preprocessing <span class="im">import</span> LFR</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.algorithms.preprocessing <span class="im">import</span> OptimPreproc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/torch/_functorch/deprecated.py:61: UserWarning: We've integrated functorch into PyTorch. As the final step of the integration, functorch.vmap is deprecated as of PyTorch 2.0 and will be deleted in a future version of PyTorch &gt;= 2.3. Please use torch.vmap instead; see the PyTorch 2.0 release notes and/or the torch.func migration guide for more details https://pytorch.org/docs/master/func.migrating.html
+  warn_deprecated('vmap', 'torch.vmap')</code></pre>
+</div>
+</div>
+<div id="cell-1" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-2" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset_orig_compas = MEPSDataset19()</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>dataset_orig_compas <span class="op">=</span> CompasDataset()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:root:Missing Data: 5 rows removed from CompasDataset.</code></pre>
+</div>
+</div>
+<div id="cell-3" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset_orig_panel19_train = MEPSDataset19()</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>dataset_orig_compas_train <span class="op">=</span> CompasDataset()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:root:Missing Data: 5 rows removed from CompasDataset.</code></pre>
+</div>
+</div>
+<div id="cell-4" class="cell" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(dataset_orig_compas_train)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="56">
+<pre><code>aif360.datasets.compas_dataset.CompasDataset</code></pre>
+</div>
+</div>
+<div id="cell-5" class="cell" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dataset_orig_compas_train.feature_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>['sex', 'age', 'race', 'juv_fel_count', 'juv_misd_count', 'juv_other_count', 'priors_count', 'age_cat=25 - 45', 'age_cat=Greater than 45', 'age_cat=Less than 25', 'c_charge_degree=F', 'c_charge_degree=M', 'c_charge_desc=Abuse Without Great Harm', 'c_charge_desc=Agg Abuse Elderlly/Disabled Adult', 'c_charge_desc=Agg Assault W/int Com Fel Dome', 'c_charge_desc=Agg Battery Grt/Bod/Harm', 'c_charge_desc=Agg Fleeing and Eluding', 'c_charge_desc=Agg Fleeing/Eluding High Speed', 'c_charge_desc=Aggr Child Abuse-Torture,Punish', 'c_charge_desc=Aggrav Battery w/Deadly Weapon', 'c_charge_desc=Aggrav Child Abuse-Agg Battery', 'c_charge_desc=Aggrav Child Abuse-Causes Harm', 'c_charge_desc=Aggrav Stalking After Injunctn', 'c_charge_desc=Aggravated Assault', 'c_charge_desc=Aggravated Assault W/Dead Weap', 'c_charge_desc=Aggravated Assault W/dead Weap', 'c_charge_desc=Aggravated Assault W/o Firearm', 'c_charge_desc=Aggravated Assault w/Firearm', 'c_charge_desc=Aggravated Battery', 'c_charge_desc=Aggravated Battery (Firearm)', 'c_charge_desc=Aggravated Battery (Firearm/Actual Possession)', 'c_charge_desc=Aggravated Battery / Pregnant', 'c_charge_desc=Aggravated Battery On 65/Older', 'c_charge_desc=Aide/Abet Prostitution Lewdness', 'c_charge_desc=Aiding Escape', 'c_charge_desc=Alcoholic Beverage Violation-FL', 'c_charge_desc=Armed Trafficking in Cannabis', 'c_charge_desc=Arson in the First Degree', 'c_charge_desc=Assault', 'c_charge_desc=Assault Law Enforcement Officer', 'c_charge_desc=Att Burgl Conv Occp', 'c_charge_desc=Att Burgl Struc/Conv Dwel/Occp', 'c_charge_desc=Att Burgl Unoccupied Dwel', 'c_charge_desc=Att Tamper w/Physical Evidence', 'c_charge_desc=Attempt Armed Burglary Dwell', 'c_charge_desc=Attempted Burg/Convey/Unocc', 'c_charge_desc=Attempted Burg/struct/unocc', 'c_charge_desc=Attempted Deliv Control Subst', 'c_charge_desc=Attempted Robbery  No Weapon', 'c_charge_desc=Attempted Robbery  Weapon', 'c_charge_desc=Battery', 'c_charge_desc=Battery Emergency Care Provide', 'c_charge_desc=Battery On A Person Over 65', 'c_charge_desc=Battery On Fire Fighter', 'c_charge_desc=Battery On Parking Enfor Speci', 'c_charge_desc=Battery Spouse Or Girlfriend', 'c_charge_desc=Battery on Law Enforc Officer', 'c_charge_desc=Battery on a Person Over 65', 'c_charge_desc=Bribery Athletic Contests', 'c_charge_desc=Burgl Dwel/Struct/Convey Armed', 'c_charge_desc=Burglary Assault/Battery Armed', 'c_charge_desc=Burglary Conveyance Armed', 'c_charge_desc=Burglary Conveyance Assault/Bat', 'c_charge_desc=Burglary Conveyance Occupied', 'c_charge_desc=Burglary Conveyance Unoccup', 'c_charge_desc=Burglary Dwelling Armed', 'c_charge_desc=Burglary Dwelling Assault/Batt', 'c_charge_desc=Burglary Dwelling Occupied', 'c_charge_desc=Burglary Structure Assault/Batt', 'c_charge_desc=Burglary Structure Occupied', 'c_charge_desc=Burglary Structure Unoccup', 'c_charge_desc=Burglary Unoccupied Dwelling', 'c_charge_desc=Burglary With Assault/battery', 'c_charge_desc=Carjacking w/o Deadly Weapon', 'c_charge_desc=Carjacking with a Firearm', 'c_charge_desc=Carry Open/Uncov Bev In Pub', 'c_charge_desc=Carrying A Concealed Weapon', 'c_charge_desc=Carrying Concealed Firearm', 'c_charge_desc=Cash Item w/Intent to Defraud', 'c_charge_desc=Child Abuse', 'c_charge_desc=Computer Pornography', 'c_charge_desc=Consp Traff Oxycodone  4g&gt;&lt;14g', 'c_charge_desc=Conspiracy Dealing Stolen Prop', 'c_charge_desc=Consume Alcoholic Bev Pub', 'c_charge_desc=Contradict Statement', 'c_charge_desc=Contribute Delinquency Of A Minor', 'c_charge_desc=Corrupt Public Servant', 'c_charge_desc=Counterfeit Lic Plates/Sticker', 'c_charge_desc=Crim Attempt/Solic/Consp', 'c_charge_desc=Crim Use of Personal ID Info', 'c_charge_desc=Crimin Mischief Damage $1000+', 'c_charge_desc=Criminal Mischief', 'c_charge_desc=Criminal Mischief Damage &lt;$200', 'c_charge_desc=Criminal Mischief&gt;$200&lt;$1000', 'c_charge_desc=Crlty Twrd Child Urge Oth Act', 'c_charge_desc=Cruelty Toward Child', 'c_charge_desc=Cruelty to Animals', 'c_charge_desc=Culpable Negligence', 'c_charge_desc=D.U.I. Serious Bodily Injury', 'c_charge_desc=DOC/Cause Public Danger', 'c_charge_desc=DUI - Enhanced', 'c_charge_desc=DUI - Property Damage/Personal Injury', 'c_charge_desc=DUI Blood Alcohol Above 0.20', 'c_charge_desc=DUI Level 0.15 Or Minor In Veh', 'c_charge_desc=DUI Property Damage/Injury', 'c_charge_desc=DUI- Enhanced', 'c_charge_desc=DUI/Property Damage/Persnl Inj', 'c_charge_desc=DWI w/Inj Susp Lic / Habit Off', 'c_charge_desc=DWLS Canceled Disqul 1st Off', 'c_charge_desc=DWLS Susp/Cancel Revoked', 'c_charge_desc=Dealing in Stolen Property', 'c_charge_desc=Defrauding Innkeeper', 'c_charge_desc=Defrauding Innkeeper $300/More', 'c_charge_desc=Del 3,4 Methylenedioxymethcath', 'c_charge_desc=Del Cannabis At/Near Park', 'c_charge_desc=Del Cannabis For Consideration', 'c_charge_desc=Del of JWH-250 2-Methox 1-Pentyl', 'c_charge_desc=Deliver 3,4 Methylenediox', 'c_charge_desc=Deliver Alprazolam', 'c_charge_desc=Deliver Cannabis', 'c_charge_desc=Deliver Cannabis 1000FTSch', 'c_charge_desc=Deliver Cocaine', 'c_charge_desc=Deliver Cocaine 1000FT Church', 'c_charge_desc=Deliver Cocaine 1000FT Park', 'c_charge_desc=Deliver Cocaine 1000FT School', 'c_charge_desc=Deliver Cocaine 1000FT Store', 'c_charge_desc=Delivery Of Drug Paraphernalia', 'c_charge_desc=Delivery of 5-Fluoro PB-22', 'c_charge_desc=Delivery of Heroin', 'c_charge_desc=Depriv LEO of Protect/Communic', 'c_charge_desc=Disorderly Conduct', 'c_charge_desc=Disorderly Intoxication', 'c_charge_desc=Disrupting School Function', 'c_charge_desc=Drivg While Lic Suspd/Revk/Can', 'c_charge_desc=Driving License Suspended', 'c_charge_desc=Driving Under The Influence', 'c_charge_desc=Driving While License Revoked', 'c_charge_desc=Escape', 'c_charge_desc=Exhibition Weapon School Prop', 'c_charge_desc=Expired DL More Than 6 Months', 'c_charge_desc=Exposes Culpable Negligence', 'c_charge_desc=Extradition/Defendants', 'c_charge_desc=Fabricating Physical Evidence', 'c_charge_desc=Fail Register Vehicle', 'c_charge_desc=Fail Sex Offend Report Bylaw', 'c_charge_desc=Fail To Obey Police Officer', 'c_charge_desc=Fail To Redeliv Hire/Leas Prop', 'c_charge_desc=Failure To Pay Taxi Cab Charge', 'c_charge_desc=Failure To Return Hired Vehicle', 'c_charge_desc=False 911 Call', 'c_charge_desc=False Bomb Report', 'c_charge_desc=False Imprisonment', 'c_charge_desc=False Info LEO During Invest', 'c_charge_desc=False Motor Veh Insurance Card', 'c_charge_desc=False Name By Person Arrest', 'c_charge_desc=False Ownership Info/Pawn Item', 'c_charge_desc=Falsely Impersonating Officer', 'c_charge_desc=Fel Drive License Perm Revoke', 'c_charge_desc=Felon in Pos of Firearm or Amm', 'c_charge_desc=Felony Batt(Great Bodily Harm)', 'c_charge_desc=Felony Battery', 'c_charge_desc=Felony Battery (Dom Strang)', 'c_charge_desc=Felony Battery w/Prior Convict', 'c_charge_desc=Felony Committing Prostitution', 'c_charge_desc=Felony DUI (level 3)', 'c_charge_desc=Felony DUI - Enhanced', 'c_charge_desc=Felony Driving While Lic Suspd', 'c_charge_desc=Felony Petit Theft', 'c_charge_desc=Felony/Driving Under Influence', 'c_charge_desc=Fighting/Baiting Animals', 'c_charge_desc=Fleeing Or Attmp Eluding A Leo', 'c_charge_desc=Fleeing or Eluding a LEO', 'c_charge_desc=Forging Bank Bills/Promis Note', 'c_charge_desc=Fraudulent Use of Credit Card', 'c_charge_desc=Grand Theft (Motor Vehicle)', 'c_charge_desc=Grand Theft Dwell Property', 'c_charge_desc=Grand Theft Firearm', 'c_charge_desc=Grand Theft in the 1st Degree', 'c_charge_desc=Grand Theft in the 3rd Degree', 'c_charge_desc=Grand Theft of a Fire Extinquisher', 'c_charge_desc=Grand Theft of the 2nd Degree', 'c_charge_desc=Grand Theft on 65 Yr or Older', 'c_charge_desc=Harass Witness/Victm/Informnt', 'c_charge_desc=Harm Public Servant Or Family', 'c_charge_desc=Hiring with Intent to Defraud', 'c_charge_desc=Imperson Public Officer or Emplyee', 'c_charge_desc=Interfere W/Traf Cont Dev RR', 'c_charge_desc=Interference with Custody', 'c_charge_desc=Intoxicated/Safety Of Another', 'c_charge_desc=Introduce Contraband Into Jail', 'c_charge_desc=Issuing a Worthless Draft', 'c_charge_desc=Kidnapping / Domestic Violence', 'c_charge_desc=Lease For Purpose Trafficking', 'c_charge_desc=Leave Acc/Attend Veh/More $50', 'c_charge_desc=Leave Accd/Attend Veh/Less $50', 'c_charge_desc=Leaving Acc/Unattended Veh', 'c_charge_desc=Leaving the Scene of Accident', 'c_charge_desc=Lewd Act Presence Child 16-', 'c_charge_desc=Lewd or Lascivious Molestation', 'c_charge_desc=Lewd/Lasc Battery Pers 12+/&lt;16', 'c_charge_desc=Lewd/Lasc Exhib Presence &lt;16yr', 'c_charge_desc=Lewd/Lasciv Molest Elder Persn', 'c_charge_desc=Lewdness Violation', 'c_charge_desc=License Suspended Revoked', 'c_charge_desc=Littering', 'c_charge_desc=Live on Earnings of Prostitute', 'c_charge_desc=Lve/Scen/Acc/Veh/Prop/Damage', 'c_charge_desc=Manage Busn W/O City Occup Lic', 'c_charge_desc=Manslaughter W/Weapon/Firearm', 'c_charge_desc=Manufacture Cannabis', 'c_charge_desc=Misuse Of 911 Or E911 System', 'c_charge_desc=Money Launder 100K or More Dols', 'c_charge_desc=Murder In 2nd Degree W/firearm', 'c_charge_desc=Murder in the First Degree', 'c_charge_desc=Neglect Child / Bodily Harm', 'c_charge_desc=Neglect Child / No Bodily Harm', 'c_charge_desc=Neglect/Abuse Elderly Person', 'c_charge_desc=Obstruct Fire Equipment', 'c_charge_desc=Obstruct Officer W/Violence', 'c_charge_desc=Obtain Control Substance By Fraud', 'c_charge_desc=Offer Agree Secure For Lewd Act', 'c_charge_desc=Offer Agree Secure/Lewd Act', 'c_charge_desc=Offn Against Intellectual Prop', 'c_charge_desc=Open Carrying Of Weapon', 'c_charge_desc=Oper Motorcycle W/O Valid DL', 'c_charge_desc=Operating W/O Valid License', 'c_charge_desc=Opert With Susp DL 2nd Offens', 'c_charge_desc=PL/Unlaw Use Credit Card', 'c_charge_desc=Petit Theft', 'c_charge_desc=Petit Theft $100- $300', 'c_charge_desc=Pos Cannabis For Consideration', 'c_charge_desc=Pos Cannabis W/Intent Sel/Del', 'c_charge_desc=Pos Methylenedioxymethcath W/I/D/S', 'c_charge_desc=Poss 3,4 MDMA (Ecstasy)', 'c_charge_desc=Poss Alprazolam W/int Sell/Del', 'c_charge_desc=Poss Anti-Shoplifting Device', 'c_charge_desc=Poss Cntrft Contr Sub w/Intent', 'c_charge_desc=Poss Cocaine/Intent To Del/Sel', 'c_charge_desc=Poss Contr Subst W/o Prescript', 'c_charge_desc=Poss Counterfeit Payment Inst', 'c_charge_desc=Poss Drugs W/O A Prescription', 'c_charge_desc=Poss F/Arm Delinq', 'c_charge_desc=Poss Firearm W/Altered ID#', 'c_charge_desc=Poss Meth/Diox/Meth/Amp (MDMA)', 'c_charge_desc=Poss Of 1,4-Butanediol', 'c_charge_desc=Poss Of Controlled Substance', 'c_charge_desc=Poss Of RX Without RX', 'c_charge_desc=Poss Oxycodone W/Int/Sell/Del', 'c_charge_desc=Poss Pyrrolidinobutiophenone', 'c_charge_desc=Poss Pyrrolidinovalerophenone', 'c_charge_desc=Poss Pyrrolidinovalerophenone W/I/D/S', 'c_charge_desc=Poss Similitude of Drivers Lic', 'c_charge_desc=Poss Tetrahydrocannabinols', 'c_charge_desc=Poss Unlaw Issue Driver Licenc', 'c_charge_desc=Poss Unlaw Issue Id', 'c_charge_desc=Poss Wep Conv Felon', 'c_charge_desc=Poss of Cocaine W/I/D/S 1000FT Park', 'c_charge_desc=Poss of Firearm by Convic Felo', 'c_charge_desc=Poss of Methylethcathinone', 'c_charge_desc=Poss/Sell/Del Cocaine 1000FT Sch', 'c_charge_desc=Poss/Sell/Del/Man Amobarbital', 'c_charge_desc=Poss/pur/sell/deliver Cocaine', 'c_charge_desc=Poss3,4 Methylenedioxymethcath', 'c_charge_desc=Posses/Disply Susp/Revk/Frd DL', 'c_charge_desc=Possess Cannabis 1000FTSch', 'c_charge_desc=Possess Cannabis/20 Grams Or Less', 'c_charge_desc=Possess Controlled Substance', 'c_charge_desc=Possess Countrfeit Credit Card', 'c_charge_desc=Possess Drug Paraphernalia', 'c_charge_desc=Possess Mot Veh W/Alt Vin #', 'c_charge_desc=Possess Tobacco Product Under 18', 'c_charge_desc=Possess Weapon On School Prop', 'c_charge_desc=Possess w/I/Utter Forged Bills', 'c_charge_desc=Possession Burglary Tools', 'c_charge_desc=Possession Child Pornography', 'c_charge_desc=Possession Firearm School Prop', 'c_charge_desc=Possession Of 3,4Methylenediox', 'c_charge_desc=Possession Of Alprazolam', 'c_charge_desc=Possession Of Amphetamine', 'c_charge_desc=Possession Of Anabolic Steroid', 'c_charge_desc=Possession Of Buprenorphine', 'c_charge_desc=Possession Of Carisoprodol', 'c_charge_desc=Possession Of Clonazepam', 'c_charge_desc=Possession Of Cocaine', 'c_charge_desc=Possession Of Diazepam', 'c_charge_desc=Possession Of Fentanyl', 'c_charge_desc=Possession Of Heroin', 'c_charge_desc=Possession Of Methamphetamine', 'c_charge_desc=Possession Of Paraphernalia', 'c_charge_desc=Possession Of Phentermine', 'c_charge_desc=Possession of Alcohol Under 21', 'c_charge_desc=Possession of Benzylpiperazine', 'c_charge_desc=Possession of Butylone', 'c_charge_desc=Possession of Cannabis', 'c_charge_desc=Possession of Cocaine', 'c_charge_desc=Possession of Codeine', 'c_charge_desc=Possession of Ethylone', 'c_charge_desc=Possession of Hydrocodone', 'c_charge_desc=Possession of Hydromorphone', 'c_charge_desc=Possession of LSD', 'c_charge_desc=Possession of Methadone', 'c_charge_desc=Possession of Morphine', 'c_charge_desc=Possession of Oxycodone', 'c_charge_desc=Possession of XLR11', 'c_charge_desc=Principal In The First Degree', 'c_charge_desc=Prostitution', 'c_charge_desc=Prostitution/Lewd Act Assignation', 'c_charge_desc=Prostitution/Lewdness/Assign', 'c_charge_desc=Prowling/Loitering', 'c_charge_desc=Purchase Cannabis', 'c_charge_desc=Purchase/P/W/Int Cannabis', 'c_charge_desc=Reckless Driving', 'c_charge_desc=Refuse Submit Blood/Breath Test', 'c_charge_desc=Refuse to Supply DNA Sample', 'c_charge_desc=Resist Officer w/Violence', 'c_charge_desc=Resist/Obstruct W/O Violence', 'c_charge_desc=Retail Theft $300 1st Offense', 'c_charge_desc=Retail Theft $300 2nd Offense', 'c_charge_desc=Ride Tri-Rail Without Paying', 'c_charge_desc=Robbery / No Weapon', 'c_charge_desc=Robbery / Weapon', 'c_charge_desc=Robbery Sudd Snatch No Weapon', 'c_charge_desc=Robbery W/Deadly Weapon', 'c_charge_desc=Robbery W/Firearm', 'c_charge_desc=Sale/Del Cannabis At/Near Scho', 'c_charge_desc=Sale/Del Counterfeit Cont Subs', 'c_charge_desc=Sel/Pur/Mfr/Del Control Substa', 'c_charge_desc=Sell or Offer for Sale Counterfeit Goods', 'c_charge_desc=Sell/Man/Del Pos/w/int Heroin', 'c_charge_desc=Sex Batt Faml/Cust Vict 12-17Y', 'c_charge_desc=Sex Battery Deft 18+/Vict 11-', 'c_charge_desc=Sex Offender Fail Comply W/Law', 'c_charge_desc=Sexual Battery / Vict 12 Yrs +', 'c_charge_desc=Sexual Performance by a Child', 'c_charge_desc=Shoot In Occupied Dwell', 'c_charge_desc=Shoot Into Vehicle', 'c_charge_desc=Simulation of Legal Process', 'c_charge_desc=Solic to Commit Battery', 'c_charge_desc=Solicit Deliver Cocaine', 'c_charge_desc=Solicit Purchase Cocaine', 'c_charge_desc=Solicit To Deliver Cocaine', 'c_charge_desc=Solicitation On Felony 3 Deg', 'c_charge_desc=Soliciting For Prostitution', 'c_charge_desc=Sound Articles Over 100', 'c_charge_desc=Stalking', 'c_charge_desc=Stalking (Aggravated)', 'c_charge_desc=Strong Armed  Robbery', 'c_charge_desc=Structuring Transactions', 'c_charge_desc=Susp Drivers Lic 1st Offense', 'c_charge_desc=Tamper With Victim', 'c_charge_desc=Tamper With Witness', 'c_charge_desc=Tamper With Witness/Victim/CI', 'c_charge_desc=Tampering With Physical Evidence', 'c_charge_desc=Tampering with a Victim', 'c_charge_desc=Theft/To Deprive', 'c_charge_desc=Threat Public Servant', 'c_charge_desc=Throw Deadly Missile Into Veh', 'c_charge_desc=Throw In Occupied Dwell', 'c_charge_desc=Throw Missile Into Pub/Priv Dw', 'c_charge_desc=Traff In Cocaine &lt;400g&gt;150 Kil', 'c_charge_desc=Traffic Counterfeit Cred Cards', 'c_charge_desc=Traffick Amphetamine 28g&gt;&lt;200g', 'c_charge_desc=Traffick Oxycodone     4g&gt;&lt;14g', 'c_charge_desc=Trans/Harm/Material to a Minor', 'c_charge_desc=Trespass On School Grounds', 'c_charge_desc=Trespass Other Struct/Conve', 'c_charge_desc=Trespass Private Property', 'c_charge_desc=Trespass Property w/Dang Weap', 'c_charge_desc=Trespass Struct/Conveyance', 'c_charge_desc=Trespass Structure w/Dang Weap', 'c_charge_desc=Trespass Structure/Conveyance', 'c_charge_desc=Trespassing/Construction Site', 'c_charge_desc=Tresspass Struct/Conveyance', 'c_charge_desc=Tresspass in Structure or Conveyance', 'c_charge_desc=Unauth C/P/S Sounds&gt;1000/Audio', 'c_charge_desc=Unauth Poss ID Card or DL', 'c_charge_desc=Unauthorized Interf w/Railroad', 'c_charge_desc=Unl/Disturb Education/Instui', 'c_charge_desc=Unlaw Lic Use/Disply Of Others', 'c_charge_desc=Unlaw LicTag/Sticker Attach', 'c_charge_desc=Unlaw Use False Name/Identity', 'c_charge_desc=Unlawful Conveyance of Fuel', 'c_charge_desc=Unlicensed Telemarketing', 'c_charge_desc=Use Computer for Child Exploit', 'c_charge_desc=Use Of 2 Way Device To Fac Fel', 'c_charge_desc=Use Scanning Device to Defraud', 'c_charge_desc=Use of Anti-Shoplifting Device', 'c_charge_desc=Uttering Forged Bills', 'c_charge_desc=Uttering Forged Credit Card', 'c_charge_desc=Uttering Worthless Check +$150', 'c_charge_desc=Uttering a Forged Instrument', 'c_charge_desc=Video Voyeur-&lt;24Y on Child &gt;16', 'c_charge_desc=Viol Injunct Domestic Violence', 'c_charge_desc=Viol Injunction Protect Dom Vi', 'c_charge_desc=Viol Pretrial Release Dom Viol', 'c_charge_desc=Viol Prot Injunc Repeat Viol', 'c_charge_desc=Violation License Restrictions', 'c_charge_desc=Violation Of Boater Safety Id', 'c_charge_desc=Violation of Injunction Order/Stalking/Cyberstalking', 'c_charge_desc=Voyeurism', 'c_charge_desc=arrest case no charge']</code></pre>
+</div>
+</div>
+<div id="cell-6" class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dataset_orig_compas_train.features</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="57">
+<pre><code>array([[ 0., 69.,  0., ...,  0.,  0.,  0.],
+       [ 0., 34.,  0., ...,  0.,  0.,  0.],
+       [ 0., 24.,  0., ...,  0.,  0.,  0.],
+       ...,
+       [ 0., 57.,  0., ...,  0.,  0.,  0.],
+       [ 1., 33.,  0., ...,  0.,  0.,  0.],
+       [ 1., 23.,  0., ...,  0.,  0.,  0.]])</code></pre>
+</div>
+</div>
+<div id="cell-7" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sens_ind = 0</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sens_attr = dataset_orig_panel19_train.protected_attribute_names[sens_ind]</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># unprivileged_groups = [{sens_attr: v} for v in</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                     dataset_orig_panel19_train.unprivileged_protected_attributes[sens_ind]]</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># privileged_groups = [{sens_attr: v} for v in</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                     dataset_orig_panel19_train.privileged_protected_attributes[sens_ind]]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-8" class="cell" data-execution_count="45">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sens_ind <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>sens_attr_comp <span class="op">=</span> dataset_orig_compas_train.protected_attribute_names[sens_ind]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>unprivileged_groups_compas <span class="op">=</span> [{sens_attr_comp: v} <span class="cf">for</span> v <span class="kw">in</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                    dataset_orig_compas_train.unprivileged_protected_attributes[sens_ind]]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>privileged_groups_compas <span class="op">=</span> [{sens_attr_comp: v} <span class="cf">for</span> v <span class="kw">in</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                    dataset_orig_compas_train.privileged_protected_attributes[sens_ind]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-9" class="cell" data-execution_count="46">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sens_attr_comp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="46">
+<pre><code>'race'</code></pre>
+</div>
+</div>
+<div id="cell-10" class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>privileged_groups_compas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="43">
+<pre><code>[{'race': 1.0}]</code></pre>
+</div>
+</div>
+<div id="cell-11" class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>unprivileged_groups_compas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
+<pre><code>[{'race': 0.0}]</code></pre>
+</div>
+</div>
+<div id="cell-13" class="cell" data-execution_count="47">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>metric_orig_panel19_train <span class="op">=</span> BinaryLabelDatasetMetric(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>        dataset_orig_compas_train,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>        unprivileged_groups<span class="op">=</span>unprivileged_groups_compas,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>        privileged_groups<span class="op">=</span>privileged_groups_compas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-14" class="cell" data-execution_count="48">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>explainer_orig_panel19_train <span class="op">=</span> MetricTextExplainer(metric_orig_panel19_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-16" class="cell" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>test_name<span class="op">=</span>[<span class="st">'Mean Difference'</span>,<span class="st">'Consistency'</span>,<span class="st">'Statistical Parity Difference'</span>,<span class="st">'Disparate Impact'</span>]</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>test_definitions<span class="op">=</span>[<span class="st">'difference between mean values of two labels'</span>,<span class="st">'Individual fairness metric that measures how similar the labels are for similar instances.'</span>,<span class="st">'Difference in selection rates.'</span>,<span class="st">'ratio of positive outcomes in the unprivileged group divided by the ratio of positive outcomes in the privileged group.'</span>]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>test_results<span class="op">=</span>[explainer_orig_panel19_train.mean_difference(),explainer_orig_panel19_train.consistency(),explainer_orig_panel19_train.statistical_parity_difference(),explainer_orig_panel19_train.disparate_impact()]</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>test_status<span class="op">=</span>[<span class="st">'Bias Detected'</span>,<span class="st">'Bias Not Detected'</span>,<span class="st">'Bias Detected'</span>,<span class="st">'Bias Detected'</span>]</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>pd.DataFrame({<span class="st">'Test Name'</span>:test_name,<span class="st">'Test Definitions'</span>:test_definitions,<span class="st">'Test Results'</span>:test_results,<span class="st">'Test Status'</span>:test_status})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-17" class="cell" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>test_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="52">
+<pre><code>['Mean difference (mean label value on unprivileged instances - mean label value on privileged instances): -0.09713793951315464',
+ 'Consistency (Zemel, et al. 2013): [0.67630939]',
+ 'Statistical parity difference (probability of favorable outcome for unprivileged instances - probability of favorable outcome for privileged instances): -0.09713793951315464',
+ 'Disparate impact (probability of favorable outcome for unprivileged instances / probability of favorable outcome for privileged instances): 0.8403836674666473']</code></pre>
+</div>
+</div>
+<div id="cell-18" class="cell" data-execution_count="64">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>RW <span class="op">=</span> Reweighing(unprivileged_groups<span class="op">=</span>unprivileged_groups_compas,privileged_groups<span class="op">=</span>privileged_groups_compas)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>dataset_transf_compas_train_rw <span class="op">=</span> RW.fit_transform(dataset_orig_compas_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-19" class="cell" data-execution_count="81">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>lfr_model <span class="op">=</span> LFR(unprivileged_groups<span class="op">=</span>unprivileged_groups_compas, </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                privileged_groups<span class="op">=</span>privileged_groups_compas)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model and transform the dataset</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>lfr_model.fit(dataset_orig_compas_train)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>dataset_transf_compas_train_lfr <span class="op">=</span> lfr_model.transform(dataset_orig_compas_train, threshold <span class="op">=</span> <span class="fl">0.1</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>dataset_transf_compas_train_lfr <span class="op">=</span> dataset_orig_compas_train.align_datasets(dataset_transf_compas_train_lfr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-20" class="cell" data-execution_count="74">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import numpy as np</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># def get_distortion_meps(vold, vnew):</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Initialize distortion score</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     distortion_score = 0.0</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Define weights for different categories of attributes</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     sensitive_weight = 3.0</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     health_status_weight = 2.0</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     socio_economic_weight = 1.0</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     behavior_weight = 1.5</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Sensitive attributes</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="co">#     for attr in ['sex', 'age', 'race']:</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="co">#         if vold[attr] != vnew[attr]:</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="co">#             distortion_score += sensitive_weight</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Health status indicators</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="co">#     health_attrs = ['PCS42', 'MCS42', 'K6SUM42', 'HIBPDX', 'DIABDX', 'CHDDX', 'ANGIDX', 'MIDX', 'OHRTDX', 'STRKDX', 'EMPHDX', 'CANCERDX', 'JTPAIN', 'ARTHDX', 'ASTHDX', 'ADHDADDX']</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a><span class="co">#     for attr in health_attrs:</span></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a><span class="co">#         # Assuming health status attributes are numerical and a difference in value indicates a change in health status</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a><span class="co">#         distortion_score += health_status_weight * abs(vold.get(attr, 0) - vnew.get(attr, 0))</span></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Socioeconomic and environmental factors</span></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a><span class="co">#     socio_attrs = ['REGION=1', 'REGION=2', 'REGION=3', 'REGION=4', 'MARRY', 'FTSTU', 'EMPST', 'POVCAT', 'INSCOV']</span></span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="co">#     for attr in socio_attrs:</span></span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a><span class="co">#         if vold[attr] != vnew[attr]:</span></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a><span class="co">#             distortion_score += socio_economic_weight</span></span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Health-related behaviors</span></span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a><span class="co">#     behavior_attrs = ['ADSMOK42', 'WLKLIM', 'ACTLIM', 'SOCLIM', 'COGLIM']</span></span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a><span class="co">#     for attr in behavior_attrs:</span></span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a><span class="co">#         if vold[attr] != vnew[attr]:</span></span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a><span class="co">#             distortion_score += behavior_weight</span></span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a><span class="co">#     return distortion_score</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-21" class="cell" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_distortion_compas(vold, vnew):</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize distortion score</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    distortion_score <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define weights for different categories of attributes</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    sensitive_weight <span class="op">=</span> <span class="fl">3.0</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    criminal_history_weight <span class="op">=</span> <span class="fl">2.0</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    age_category_weight <span class="op">=</span> <span class="fl">1.5</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    charge_degree_weight <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    specific_charge_weight <span class="op">=</span> <span class="fl">0.5</span>  <span class="co"># Lower weight as there are many specific charges</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sensitive attributes</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> attr <span class="kw">in</span> [<span class="st">'sex'</span>, <span class="st">'age'</span>, <span class="st">'race'</span>]:</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> vold[attr] <span class="op">!=</span> vnew[attr]:</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>            distortion_score <span class="op">+=</span> sensitive_weight</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Criminal history indicators</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    criminal_attrs <span class="op">=</span> [<span class="st">'juv_fel_count'</span>, <span class="st">'juv_misd_count'</span>, <span class="st">'juv_other_count'</span>, <span class="st">'priors_count'</span>]</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> attr <span class="kw">in</span> criminal_attrs:</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>        distortion_score <span class="op">+=</span> criminal_history_weight <span class="op">*</span> <span class="bu">abs</span>(vold.get(attr, <span class="dv">0</span>) <span class="op">-</span> vnew.get(attr, <span class="dv">0</span>))</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Age category</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>    age_cats <span class="op">=</span> [<span class="st">'age_cat=25 - 45'</span>, <span class="st">'age_cat=Greater than 45'</span>, <span class="st">'age_cat=Less than 25'</span>]</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> attr <span class="kw">in</span> age_cats:</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> vold.get(attr, <span class="dv">0</span>) <span class="op">!=</span> vnew.get(attr, <span class="dv">0</span>):</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>            distortion_score <span class="op">+=</span> age_category_weight</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Charge degree</span></span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>    charge_degrees <span class="op">=</span> [<span class="st">'c_charge_degree=F'</span>, <span class="st">'c_charge_degree=M'</span>]</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> attr <span class="kw">in</span> charge_degrees:</span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> vold.get(attr, <span class="dv">0</span>) <span class="op">!=</span> vnew.get(attr, <span class="dv">0</span>):</span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>            distortion_score <span class="op">+=</span> charge_degree_weight</span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Specific charges, just check if there's any change</span></span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>    charge_changes <span class="op">=</span> <span class="bu">sum</span>(vold.get(attr, <span class="dv">0</span>) <span class="op">!=</span> vnew.get(attr, <span class="dv">0</span>) <span class="cf">for</span> attr <span class="kw">in</span> vold <span class="cf">if</span> attr.startswith(<span class="st">'c_charge_desc='</span>))</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>    distortion_score <span class="op">+=</span> specific_charge_weight <span class="op">*</span> charge_changes</span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> distortion_score</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-22" class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DI = DisparateImpactRemover()</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset_transf_compas_train_di = DI.fit_transform(dataset_orig_panel19_train)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-23" class="cell" data-execution_count="66">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>DI <span class="op">=</span> DisparateImpactRemover()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>dataset_transf_compas_train_di <span class="op">=</span> DI.fit_transform(dataset_orig_compas_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-24" class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># metric_transf_panel19_train = BinaryLabelDatasetMetric(</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset_transf_panel19_train_rw,</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># unprivileged_groups=unprivileged_groups,</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># privileged_groups=privileged_groups)</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co"># explainer_transf_panel19_train = MetricTextExplainer(metric_transf_panel19_train)</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># test_results_rw=[explainer_transf_panel19_train.mean_difference()</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.consistency()</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.statistical_parity_difference()</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.disparate_impact()]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-25" class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>metric_transf_compas_train <span class="op">=</span> BinaryLabelDatasetMetric(</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>dataset_transf_compas_train_rw,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>unprivileged_groups<span class="op">=</span>unprivileged_groups_compas,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>privileged_groups<span class="op">=</span>privileged_groups_compas)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>explainer_transf_compas_train <span class="op">=</span> MetricTextExplainer(metric_transf_compas_train)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>test_results_rw<span class="op">=</span>[explainer_transf_compas_train.mean_difference()</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.consistency()</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.statistical_parity_difference()</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.disparate_impact()]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-26" class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># metric_transf_panel19_train = BinaryLabelDatasetMetric(</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset_transf_panel19_train_di,</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># unprivileged_groups=unprivileged_groups,</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># privileged_groups=privileged_groups)</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># explainer_transf_panel19_train = MetricTextExplainer(metric_transf_panel19_train)</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># test_results_di=[explainer_transf_panel19_train.mean_difference()</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.consistency()</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.statistical_parity_difference()</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.disparate_impact()]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-27" class="cell" data-execution_count="68">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>metric_transf_compas_train <span class="op">=</span> BinaryLabelDatasetMetric(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>dataset_transf_compas_train_di,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>unprivileged_groups<span class="op">=</span>unprivileged_groups_compas,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>privileged_groups<span class="op">=</span>privileged_groups_compas)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>explainer_transf_compas_train <span class="op">=</span> MetricTextExplainer(metric_transf_compas_train)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>test_results_di<span class="op">=</span>[explainer_transf_compas_train.mean_difference()</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.consistency()</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.statistical_parity_difference()</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.disparate_impact()]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-28" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># metric_transf_panel19_train = BinaryLabelDatasetMetric(</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset_transf_panel19_train_lfr,</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># unprivileged_groups=unprivileged_groups,</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># privileged_groups=privileged_groups)</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># explainer_transf_panel19_train = MetricTextExplainer(metric_transf_panel19_train)</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># test_results_lfr=[explainer_transf_panel19_train.mean_difference()</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.consistency()</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.statistical_parity_difference()</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                ,explainer_transf_panel19_train.disparate_impact()]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-29" class="cell" data-execution_count="82">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>metric_transf_compas_train <span class="op">=</span> BinaryLabelDatasetMetric(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>dataset_transf_compas_train_lfr,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>unprivileged_groups<span class="op">=</span>unprivileged_groups_compas,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>privileged_groups<span class="op">=</span>privileged_groups_compas)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>explainer_transf_compas_train <span class="op">=</span> MetricTextExplainer(metric_transf_compas_train)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>test_results_lfr<span class="op">=</span>[explainer_transf_compas_train.mean_difference()</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.consistency()</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.statistical_parity_difference()</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>               ,explainer_transf_compas_train.disparate_impact()]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/aif360/metrics/dataset_metric.py:82: RuntimeWarning: invalid value encountered in scalar divide
+  return metric_fun(privileged=False) / metric_fun(privileged=True)</code></pre>
+</div>
+</div>
+<div id="cell-30" class="cell" data-execution_count="70">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>test_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="70">
+<pre><code>['Mean difference (mean label value on unprivileged instances - mean label value on privileged instances): -0.09713793951315464',
+ 'Consistency (Zemel, et al. 2013): [0.67630939]',
+ 'Statistical parity difference (probability of favorable outcome for unprivileged instances - probability of favorable outcome for privileged instances): -0.09713793951315464',
+ 'Disparate impact (probability of favorable outcome for unprivileged instances / probability of favorable outcome for privileged instances): 0.8403836674666473']</code></pre>
+</div>
+</div>
+<div id="cell-31" class="cell" data-execution_count="71">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>test_results_rw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="71">
+<pre><code>['Mean difference (mean label value on unprivileged instances - mean label value on privileged instances): 1.1102230246251565e-16',
+ 'Consistency (Zemel, et al. 2013): [0.67630939]',
+ 'Statistical parity difference (probability of favorable outcome for unprivileged instances - probability of favorable outcome for privileged instances): 1.1102230246251565e-16',
+ 'Disparate impact (probability of favorable outcome for unprivileged instances / probability of favorable outcome for privileged instances): 1.0000000000000002']</code></pre>
+</div>
+</div>
+<div id="cell-32" class="cell" data-execution_count="84">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>test_results_lfr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="84">
+<pre><code>['Mean difference (mean label value on unprivileged instances - mean label value on privileged instances): 0.0',
+ 'Consistency (Zemel, et al. 2013): [1.]',
+ 'Statistical parity difference (probability of favorable outcome for unprivileged instances - probability of favorable outcome for privileged instances): 0.0',
+ 'Disparate impact (probability of favorable outcome for unprivileged instances / probability of favorable outcome for privileged instances): nan']</code></pre>
+</div>
+</div>
+<div id="cell-33" class="cell" data-execution_count="73">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>test_results_di</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="73">
+<pre><code>['Mean difference (mean label value on unprivileged instances - mean label value on privileged instances): -0.09713793951315464',
+ 'Consistency (Zemel, et al. 2013): [0.66774769]',
+ 'Statistical parity difference (probability of favorable outcome for unprivileged instances - probability of favorable outcome for privileged instances): -0.09713793951315464',
+ 'Disparate impact (probability of favorable outcome for unprivileged instances / probability of favorable outcome for privileged instances): 0.8403836674666473']</code></pre>
+</div>
+</div>
+<div id="cell-34" class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># features = dataset_transf_panel19_train_rw.features</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># label = dataset_transf_panel19_train_rw.labels.ravel()  # Flatten the label array if necessary</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co"># weights = dataset_transf_panel19_train_rw.instance_weights</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># feature_names = dataset_transf_panel19_train_rw.feature_names</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co"># df_rw = pd.DataFrame(features, columns=feature_names)</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="co"># df_rw['label'] = label</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="co"># df_rw['weights'] = weights</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-35" class="cell" data-execution_count="77">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> dataset_transf_compas_train_rw.features</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>label <span class="op">=</span> dataset_transf_compas_train_rw.labels.ravel()  <span class="co"># Flatten the label array if necessary</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> dataset_transf_compas_train_rw.instance_weights</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> dataset_transf_compas_train_rw.feature_names</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>df_rw <span class="op">=</span> pd.DataFrame(features, columns<span class="op">=</span>feature_names)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>df_rw[<span class="st">'label'</span>] <span class="op">=</span> label</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>df_rw[<span class="st">'weights'</span>] <span class="op">=</span> weights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-36" class="cell" data-execution_count="78">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>df_rw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="78">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">sex</th>
+<th data-quarto-table-cell-role="th">age</th>
+<th data-quarto-table-cell-role="th">race</th>
+<th data-quarto-table-cell-role="th">juv_fel_count</th>
+<th data-quarto-table-cell-role="th">juv_misd_count</th>
+<th data-quarto-table-cell-role="th">juv_other_count</th>
+<th data-quarto-table-cell-role="th">priors_count</th>
+<th data-quarto-table-cell-role="th">age_cat=25 - 45</th>
+<th data-quarto-table-cell-role="th">age_cat=Greater than 45</th>
+<th data-quarto-table-cell-role="th">age_cat=Less than 25</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Viol Injunction Protect Dom Vi</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Viol Pretrial Release Dom Viol</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Viol Prot Injunc Repeat Viol</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Violation License Restrictions</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Violation Of Boater Safety Id</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Violation of Injunction Order/Stalking/Cyberstalking</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Voyeurism</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=arrest case no charge</th>
+<th data-quarto-table-cell-role="th">label</th>
+<th data-quarto-table-cell-role="th">weights</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0.0</td>
+<td>69.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.064676</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>0.0</td>
+<td>34.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.932297</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>0.0</td>
+<td>24.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>4.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.932297</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>0.0</td>
+<td>44.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.064676</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>0.0</td>
+<td>41.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>14.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>1.163658</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6162</td>
+<td>0.0</td>
+<td>23.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.064676</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6163</td>
+<td>0.0</td>
+<td>23.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.064676</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6164</td>
+<td>0.0</td>
+<td>57.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.064676</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6165</td>
+<td>1.0</td>
+<td>33.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>3.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.064676</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6166</td>
+<td>1.0</td>
+<td>23.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>2.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.932297</td>
+</tr>
+</tbody>
+</table>
+
+<p>6167 rows × 403 columns</p>
+</div>
+</div>
+</div>
+<div id="cell-37" class="cell" data-execution_count="44">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> dataset_orig_panel19_train.features</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>label <span class="op">=</span> dataset_orig_panel19_train.labels</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> dataset_orig_panel19_train.feature_names</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>dataset_orig_panel19_train_df <span class="op">=</span> pd.DataFrame(features, columns<span class="op">=</span>feature_names)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>dataset_orig_panel19_train_df[<span class="st">'label'</span>] <span class="op">=</span> label</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>dataset_orig_panel19_train_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="44">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">AGE</th>
+<th data-quarto-table-cell-role="th">RACE</th>
+<th data-quarto-table-cell-role="th">PCS42</th>
+<th data-quarto-table-cell-role="th">MCS42</th>
+<th data-quarto-table-cell-role="th">K6SUM42</th>
+<th data-quarto-table-cell-role="th">REGION=1</th>
+<th data-quarto-table-cell-role="th">REGION=2</th>
+<th data-quarto-table-cell-role="th">REGION=3</th>
+<th data-quarto-table-cell-role="th">REGION=4</th>
+<th data-quarto-table-cell-role="th">SEX=1</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">EMPST=4</th>
+<th data-quarto-table-cell-role="th">POVCAT=1</th>
+<th data-quarto-table-cell-role="th">POVCAT=2</th>
+<th data-quarto-table-cell-role="th">POVCAT=3</th>
+<th data-quarto-table-cell-role="th">POVCAT=4</th>
+<th data-quarto-table-cell-role="th">POVCAT=5</th>
+<th data-quarto-table-cell-role="th">INSCOV=1</th>
+<th data-quarto-table-cell-role="th">INSCOV=2</th>
+<th data-quarto-table-cell-role="th">INSCOV=3</th>
+<th data-quarto-table-cell-role="th">label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>53.0</td>
+<td>1.0</td>
+<td>25.93</td>
+<td>58.47</td>
+<td>3.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>56.0</td>
+<td>1.0</td>
+<td>20.42</td>
+<td>26.57</td>
+<td>17.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>23.0</td>
+<td>1.0</td>
+<td>53.12</td>
+<td>50.33</td>
+<td>7.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>3.0</td>
+<td>1.0</td>
+<td>-1.00</td>
+<td>-1.00</td>
+<td>-1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>27.0</td>
+<td>0.0</td>
+<td>-1.00</td>
+<td>-1.00</td>
+<td>-1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">15825</td>
+<td>25.0</td>
+<td>0.0</td>
+<td>56.71</td>
+<td>62.39</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">15826</td>
+<td>25.0</td>
+<td>0.0</td>
+<td>56.71</td>
+<td>62.39</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">15827</td>
+<td>2.0</td>
+<td>1.0</td>
+<td>-1.00</td>
+<td>-1.00</td>
+<td>-1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">15828</td>
+<td>54.0</td>
+<td>0.0</td>
+<td>43.97</td>
+<td>42.45</td>
+<td>24.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">15829</td>
+<td>73.0</td>
+<td>0.0</td>
+<td>42.68</td>
+<td>43.46</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>15830 rows × 139 columns</p>
+</div>
+</div>
+</div>
+<div id="cell-38" class="cell" data-execution_count="79">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Assuming `dataset_transf_panel19_train_lfr` is your LFR transformed dataset</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="co"># features_lfr = dataset_transf_panel19_train_lfr.features</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="co"># label_lfr = dataset_transf_panel19_train_lfr.labels.ravel()  # Flatten the label array if necessary</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># feature_names_lfr = dataset_transf_panel19_train_lfr.feature_names</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # Create a DataFrame</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="co"># df_lfr = pd.DataFrame(features_lfr, columns=feature_names_lfr)</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="co"># df_lfr['label'] = label_lfr</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> dataset_transf_compas_train_lfr.features</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>label <span class="op">=</span> dataset_transf_compas_train_lfr.labels.ravel()  <span class="co"># Flatten the label array if necessary</span></span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> dataset_transf_compas_train_lfr.instance_weights</span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> dataset_transf_compas_train_lfr.feature_names</span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>df_lfr <span class="op">=</span> pd.DataFrame(features, columns<span class="op">=</span>feature_names)</span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>df_lfr[<span class="st">'label'</span>] <span class="op">=</span> label</span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>df_lfr[<span class="st">'weights'</span>] <span class="op">=</span> weights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-39" class="cell" data-execution_count="80">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>df_lfr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="80">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">sex</th>
+<th data-quarto-table-cell-role="th">age</th>
+<th data-quarto-table-cell-role="th">race</th>
+<th data-quarto-table-cell-role="th">juv_fel_count</th>
+<th data-quarto-table-cell-role="th">juv_misd_count</th>
+<th data-quarto-table-cell-role="th">juv_other_count</th>
+<th data-quarto-table-cell-role="th">priors_count</th>
+<th data-quarto-table-cell-role="th">age_cat=25 - 45</th>
+<th data-quarto-table-cell-role="th">age_cat=Greater than 45</th>
+<th data-quarto-table-cell-role="th">age_cat=Less than 25</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Viol Injunction Protect Dom Vi</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Viol Pretrial Release Dom Viol</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Viol Prot Injunc Repeat Viol</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Violation License Restrictions</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Violation Of Boater Safety Id</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Violation of Injunction Order/Stalking/Cyberstalking</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=Voyeurism</th>
+<th data-quarto-table-cell-role="th">c_charge_desc=arrest case no charge</th>
+<th data-quarto-table-cell-role="th">label</th>
+<th data-quarto-table-cell-role="th">weights</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0.521109</td>
+<td>0.625498</td>
+<td>0.716708</td>
+<td>0.432452</td>
+<td>0.533850</td>
+<td>0.582301</td>
+<td>0.445268</td>
+<td>0.535120</td>
+<td>0.653046</td>
+<td>0.358865</td>
+<td>...</td>
+<td>0.545693</td>
+<td>0.468199</td>
+<td>0.480423</td>
+<td>0.303290</td>
+<td>0.520715</td>
+<td>0.533933</td>
+<td>0.408816</td>
+<td>0.398183</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>0.523721</td>
+<td>0.618111</td>
+<td>0.719904</td>
+<td>0.434879</td>
+<td>0.531925</td>
+<td>0.582281</td>
+<td>0.440209</td>
+<td>0.538981</td>
+<td>0.647618</td>
+<td>0.353103</td>
+<td>...</td>
+<td>0.541876</td>
+<td>0.470039</td>
+<td>0.481520</td>
+<td>0.298589</td>
+<td>0.526050</td>
+<td>0.535778</td>
+<td>0.411733</td>
+<td>0.393008</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>0.521773</td>
+<td>0.618395</td>
+<td>0.721806</td>
+<td>0.438287</td>
+<td>0.533270</td>
+<td>0.582259</td>
+<td>0.444720</td>
+<td>0.532756</td>
+<td>0.644685</td>
+<td>0.352959</td>
+<td>...</td>
+<td>0.546447</td>
+<td>0.470344</td>
+<td>0.484824</td>
+<td>0.298436</td>
+<td>0.524345</td>
+<td>0.530726</td>
+<td>0.411325</td>
+<td>0.392385</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>0.522205</td>
+<td>0.624398</td>
+<td>0.716270</td>
+<td>0.432044</td>
+<td>0.534721</td>
+<td>0.583117</td>
+<td>0.442769</td>
+<td>0.535952</td>
+<td>0.651580</td>
+<td>0.355646</td>
+<td>...</td>
+<td>0.545672</td>
+<td>0.469955</td>
+<td>0.480438</td>
+<td>0.299492</td>
+<td>0.522338</td>
+<td>0.536884</td>
+<td>0.408060</td>
+<td>0.392491</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>0.516227</td>
+<td>0.620342</td>
+<td>0.726517</td>
+<td>0.444027</td>
+<td>0.531929</td>
+<td>0.579084</td>
+<td>0.457035</td>
+<td>0.522022</td>
+<td>0.644180</td>
+<td>0.361615</td>
+<td>...</td>
+<td>0.551542</td>
+<td>0.464862</td>
+<td>0.489937</td>
+<td>0.307846</td>
+<td>0.517226</td>
+<td>0.515481</td>
+<td>0.413552</td>
+<td>0.405947</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6162</td>
+<td>0.525380</td>
+<td>0.615405</td>
+<td>0.719757</td>
+<td>0.431285</td>
+<td>0.530067</td>
+<td>0.580368</td>
+<td>0.434852</td>
+<td>0.542806</td>
+<td>0.648857</td>
+<td>0.352716</td>
+<td>...</td>
+<td>0.536541</td>
+<td>0.467504</td>
+<td>0.480691</td>
+<td>0.295075</td>
+<td>0.525745</td>
+<td>0.540234</td>
+<td>0.412472</td>
+<td>0.387391</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6163</td>
+<td>0.524266</td>
+<td>0.616218</td>
+<td>0.720508</td>
+<td>0.433675</td>
+<td>0.531036</td>
+<td>0.581009</td>
+<td>0.437997</td>
+<td>0.539684</td>
+<td>0.647388</td>
+<td>0.352701</td>
+<td>...</td>
+<td>0.539669</td>
+<td>0.468499</td>
+<td>0.482022</td>
+<td>0.296207</td>
+<td>0.525471</td>
+<td>0.537118</td>
+<td>0.412211</td>
+<td>0.389155</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6164</td>
+<td>0.521599</td>
+<td>0.625426</td>
+<td>0.716216</td>
+<td>0.432378</td>
+<td>0.534636</td>
+<td>0.583074</td>
+<td>0.444325</td>
+<td>0.535372</td>
+<td>0.652339</td>
+<td>0.357115</td>
+<td>...</td>
+<td>0.546255</td>
+<td>0.469557</td>
+<td>0.480299</td>
+<td>0.301559</td>
+<td>0.521685</td>
+<td>0.535433</td>
+<td>0.408159</td>
+<td>0.395590</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6165</td>
+<td>0.521538</td>
+<td>0.623086</td>
+<td>0.718106</td>
+<td>0.434657</td>
+<td>0.535028</td>
+<td>0.583082</td>
+<td>0.444573</td>
+<td>0.533102</td>
+<td>0.648802</td>
+<td>0.354578</td>
+<td>...</td>
+<td>0.547564</td>
+<td>0.470453</td>
+<td>0.482579</td>
+<td>0.298797</td>
+<td>0.522425</td>
+<td>0.534039</td>
+<td>0.408527</td>
+<td>0.391653</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6166</td>
+<td>0.522265</td>
+<td>0.616323</td>
+<td>0.722428</td>
+<td>0.435223</td>
+<td>0.530786</td>
+<td>0.579325</td>
+<td>0.441727</td>
+<td>0.534815</td>
+<td>0.646657</td>
+<td>0.355179</td>
+<td>...</td>
+<td>0.541484</td>
+<td>0.465963</td>
+<td>0.484714</td>
+<td>0.297372</td>
+<td>0.522076</td>
+<td>0.532218</td>
+<td>0.412622</td>
+<td>0.390216</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>6167 rows × 403 columns</p>
+</div>
+</div>
+</div>
+<div id="cell-40" class="cell" data-execution_count="47">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming `dataset_transf_panel19_train_di` is your DI transformed dataset</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>features_di <span class="op">=</span> dataset_transf_panel19_train_di.features</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>label_di <span class="op">=</span> dataset_transf_panel19_train_di.labels.ravel()  <span class="co"># Flatten the label array if necessary</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>feature_names_di <span class="op">=</span> dataset_transf_panel19_train_di.feature_names</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a DataFrame</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>df_di <span class="op">=</span> pd.DataFrame(features_di, columns<span class="op">=</span>feature_names_di)</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>df_di[<span class="st">'label'</span>] <span class="op">=</span> label_di</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>df_di</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="47">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">AGE</th>
+<th data-quarto-table-cell-role="th">RACE</th>
+<th data-quarto-table-cell-role="th">PCS42</th>
+<th data-quarto-table-cell-role="th">MCS42</th>
+<th data-quarto-table-cell-role="th">K6SUM42</th>
+<th data-quarto-table-cell-role="th">REGION=1</th>
+<th data-quarto-table-cell-role="th">REGION=2</th>
+<th data-quarto-table-cell-role="th">REGION=3</th>
+<th data-quarto-table-cell-role="th">REGION=4</th>
+<th data-quarto-table-cell-role="th">SEX=1</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">EMPST=4</th>
+<th data-quarto-table-cell-role="th">POVCAT=1</th>
+<th data-quarto-table-cell-role="th">POVCAT=2</th>
+<th data-quarto-table-cell-role="th">POVCAT=3</th>
+<th data-quarto-table-cell-role="th">POVCAT=4</th>
+<th data-quarto-table-cell-role="th">POVCAT=5</th>
+<th data-quarto-table-cell-role="th">INSCOV=1</th>
+<th data-quarto-table-cell-role="th">INSCOV=2</th>
+<th data-quarto-table-cell-role="th">INSCOV=3</th>
+<th data-quarto-table-cell-role="th">label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>53.0</td>
+<td>1.0</td>
+<td>25.93</td>
+<td>58.47</td>
+<td>3.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>56.0</td>
+<td>1.0</td>
+<td>20.42</td>
+<td>26.53</td>
+<td>17.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>23.0</td>
+<td>1.0</td>
+<td>52.92</td>
+<td>50.28</td>
+<td>7.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>3.0</td>
+<td>1.0</td>
+<td>-1.00</td>
+<td>-1.00</td>
+<td>-1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>27.0</td>
+<td>0.0</td>
+<td>-1.00</td>
+<td>-1.00</td>
+<td>-1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">15825</td>
+<td>25.0</td>
+<td>0.0</td>
+<td>56.68</td>
+<td>62.11</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">15826</td>
+<td>25.0</td>
+<td>0.0</td>
+<td>56.68</td>
+<td>62.11</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">15827</td>
+<td>2.0</td>
+<td>1.0</td>
+<td>-1.00</td>
+<td>-1.00</td>
+<td>-1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">15828</td>
+<td>54.0</td>
+<td>0.0</td>
+<td>43.43</td>
+<td>42.45</td>
+<td>24.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">15829</td>
+<td>73.0</td>
+<td>0.0</td>
+<td>41.83</td>
+<td>43.46</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>...</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>15830 rows × 139 columns</p>
+</div>
+</div>
+</div>
+<div id="cell-41" class="cell" data-execution_count="48">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, log_loss</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'df' is your Pandas DataFrame with features, 'label', and 'weights' columns</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>dataset_orig_panel19_train_df</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the DataFrame into features, labels, and weights</span></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop([<span class="st">'label'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">'label'</span>]</span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the data into training and testing sets</span></span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the model</span></span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> LogisticRegression()</span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model using the sample_weight parameter</span></span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to extract the corresponding weights for the training samples</span></span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a>train_indices <span class="op">=</span> X_train.index</span>
+<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a>train_weights <span class="op">=</span> weights[train_indices]</span>
+<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-25"><a href="#cb55-25" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
+<span id="cb55-26"><a href="#cb55-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-27"><a href="#cb55-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Predictions</span></span>
+<span id="cb55-28"><a href="#cb55-28" aria-hidden="true" tabindex="-1"></a>y_train_pred <span class="op">=</span> model.predict(X_train)</span>
+<span id="cb55-29"><a href="#cb55-29" aria-hidden="true" tabindex="-1"></a>y_test_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb55-30"><a href="#cb55-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-31"><a href="#cb55-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Probability predictions for log loss calculation</span></span>
+<span id="cb55-32"><a href="#cb55-32" aria-hidden="true" tabindex="-1"></a>y_train_pred_proba <span class="op">=</span> model.predict_proba(X_train)</span>
+<span id="cb55-33"><a href="#cb55-33" aria-hidden="true" tabindex="-1"></a>y_test_pred_proba <span class="op">=</span> model.predict_proba(X_test)</span>
+<span id="cb55-34"><a href="#cb55-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-35"><a href="#cb55-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy</span></span>
+<span id="cb55-36"><a href="#cb55-36" aria-hidden="true" tabindex="-1"></a>train_accuracy <span class="op">=</span> accuracy_score(y_train, y_train_pred)</span>
+<span id="cb55-37"><a href="#cb55-37" aria-hidden="true" tabindex="-1"></a>test_accuracy <span class="op">=</span> accuracy_score(y_test, y_test_pred)</span>
+<span id="cb55-38"><a href="#cb55-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-39"><a href="#cb55-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate log loss</span></span>
+<span id="cb55-40"><a href="#cb55-40" aria-hidden="true" tabindex="-1"></a>train_loss <span class="op">=</span> log_loss(y_train, y_train_pred_proba)</span>
+<span id="cb55-41"><a href="#cb55-41" aria-hidden="true" tabindex="-1"></a>test_loss <span class="op">=</span> log_loss(y_test, y_test_pred_proba)</span>
+<span id="cb55-42"><a href="#cb55-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-43"><a href="#cb55-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Print errors and losses</span></span>
+<span id="cb55-44"><a href="#cb55-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Training Accuracy: </span><span class="sc">{</span>train_accuracy<span class="sc">}</span><span class="ss">, Training Log Loss: </span><span class="sc">{</span>train_loss<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb55-45"><a href="#cb55-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Testing Accuracy: </span><span class="sc">{</span>test_accuracy<span class="sc">}</span><span class="ss">, Testing Log Loss: </span><span class="sc">{</span>test_loss<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb55-46"><a href="#cb55-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-47"><a href="#cb55-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb55-48"><a href="#cb55-48" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb55-49"><a href="#cb55-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-50"><a href="#cb55-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy plot</span></span>
+<span id="cb55-51"><a href="#cb55-51" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb55-52"><a href="#cb55-52" aria-hidden="true" tabindex="-1"></a>plt.bar([<span class="st">'Train Accuracy'</span>, <span class="st">'Test Accuracy'</span>], [train_accuracy, test_accuracy], color<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'green'</span>])</span>
+<span id="cb55-53"><a href="#cb55-53" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Accuracy'</span>)</span>
+<span id="cb55-54"><a href="#cb55-54" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Train vs Test Accuracy'</span>)</span>
+<span id="cb55-55"><a href="#cb55-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-56"><a href="#cb55-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Log Loss plot</span></span>
+<span id="cb55-57"><a href="#cb55-57" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb55-58"><a href="#cb55-58" aria-hidden="true" tabindex="-1"></a>plt.bar([<span class="st">'Train Log Loss'</span>, <span class="st">'Test Log Loss'</span>], [train_loss, test_loss], color<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'green'</span>])</span>
+<span id="cb55-59"><a href="#cb55-59" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Log Loss'</span>)</span>
+<span id="cb55-60"><a href="#cb55-60" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Train vs Test Log Loss'</span>)</span>
+<span id="cb55-61"><a href="#cb55-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-62"><a href="#cb55-62" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb55-63"><a href="#cb55-63" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Training Accuracy: 0.8678932406822489, Training Log Loss: 0.3226097093813417
+Testing Accuracy: 0.8610233733417562, Testing Log Loss: 0.33582932969930285</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\srinivas\anaconda3\Lib\site-packages\sklearn\linear_model\_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+C:\Users\srinivas\AppData\Local\Temp\ipykernel_28792\1117411220.py:63: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()</code></pre>
+</div>
+</div>
+<div id="cell-42" class="cell" data-execution_count="63">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">1</span>).to_csv(<span class="st">'meps.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-43" class="cell" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, log_loss</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'df' is your Pandas DataFrame with features, 'label', and 'weights' columns</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the DataFrame into features, labels, and weights</span></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df_rw.drop([<span class="st">'label'</span>, <span class="st">'weights'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df_rw[<span class="st">'label'</span>]</span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> df_rw[<span class="st">'weights'</span>]</span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the data into training and testing sets</span></span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the model</span></span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a>model_rw <span class="op">=</span> LogisticRegression()</span>
+<span id="cb59-19"><a href="#cb59-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-20"><a href="#cb59-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model using the sample_weight parameter</span></span>
+<span id="cb59-21"><a href="#cb59-21" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to extract the corresponding weights for the training samples</span></span>
+<span id="cb59-22"><a href="#cb59-22" aria-hidden="true" tabindex="-1"></a>train_indices <span class="op">=</span> X_train.index</span>
+<span id="cb59-23"><a href="#cb59-23" aria-hidden="true" tabindex="-1"></a>train_weights <span class="op">=</span> weights[train_indices]</span>
+<span id="cb59-24"><a href="#cb59-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-25"><a href="#cb59-25" aria-hidden="true" tabindex="-1"></a>model_rw.fit(X_train, y_train, sample_weight<span class="op">=</span>train_weights)</span>
+<span id="cb59-26"><a href="#cb59-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-27"><a href="#cb59-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Predictions</span></span>
+<span id="cb59-28"><a href="#cb59-28" aria-hidden="true" tabindex="-1"></a>y_train_pred <span class="op">=</span> model_rw.predict(X_train)</span>
+<span id="cb59-29"><a href="#cb59-29" aria-hidden="true" tabindex="-1"></a>y_test_pred <span class="op">=</span> model_rw.predict(X_test)</span>
+<span id="cb59-30"><a href="#cb59-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-31"><a href="#cb59-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Probability predictions for log loss calculation</span></span>
+<span id="cb59-32"><a href="#cb59-32" aria-hidden="true" tabindex="-1"></a>y_train_pred_proba <span class="op">=</span> model_rw.predict_proba(X_train)</span>
+<span id="cb59-33"><a href="#cb59-33" aria-hidden="true" tabindex="-1"></a>y_test_pred_proba <span class="op">=</span> model_rw.predict_proba(X_test)</span>
+<span id="cb59-34"><a href="#cb59-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-35"><a href="#cb59-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy</span></span>
+<span id="cb59-36"><a href="#cb59-36" aria-hidden="true" tabindex="-1"></a>train_accuracy <span class="op">=</span> accuracy_score(y_train, y_train_pred)</span>
+<span id="cb59-37"><a href="#cb59-37" aria-hidden="true" tabindex="-1"></a>test_accuracy <span class="op">=</span> accuracy_score(y_test, y_test_pred)</span>
+<span id="cb59-38"><a href="#cb59-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-39"><a href="#cb59-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate log loss</span></span>
+<span id="cb59-40"><a href="#cb59-40" aria-hidden="true" tabindex="-1"></a>train_loss <span class="op">=</span> log_loss(y_train, y_train_pred_proba)</span>
+<span id="cb59-41"><a href="#cb59-41" aria-hidden="true" tabindex="-1"></a>test_loss <span class="op">=</span> log_loss(y_test, y_test_pred_proba)</span>
+<span id="cb59-42"><a href="#cb59-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-43"><a href="#cb59-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Print errors and losses</span></span>
+<span id="cb59-44"><a href="#cb59-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Training Accuracy: </span><span class="sc">{</span>train_accuracy<span class="sc">}</span><span class="ss">, Training Log Loss: </span><span class="sc">{</span>train_loss<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb59-45"><a href="#cb59-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Testing Accuracy: </span><span class="sc">{</span>test_accuracy<span class="sc">}</span><span class="ss">, Testing Log Loss: </span><span class="sc">{</span>test_loss<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb59-46"><a href="#cb59-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-47"><a href="#cb59-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb59-48"><a href="#cb59-48" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb59-49"><a href="#cb59-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-50"><a href="#cb59-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy plot</span></span>
+<span id="cb59-51"><a href="#cb59-51" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb59-52"><a href="#cb59-52" aria-hidden="true" tabindex="-1"></a>plt.bar([<span class="st">'Train Accuracy'</span>, <span class="st">'Test Accuracy'</span>], [train_accuracy, test_accuracy], color<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'green'</span>])</span>
+<span id="cb59-53"><a href="#cb59-53" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Accuracy'</span>)</span>
+<span id="cb59-54"><a href="#cb59-54" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Train vs Test Accuracy'</span>)</span>
+<span id="cb59-55"><a href="#cb59-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-56"><a href="#cb59-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Log Loss plot</span></span>
+<span id="cb59-57"><a href="#cb59-57" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb59-58"><a href="#cb59-58" aria-hidden="true" tabindex="-1"></a>plt.bar([<span class="st">'Train Log Loss'</span>, <span class="st">'Test Log Loss'</span>], [train_loss, test_loss], color<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'green'</span>])</span>
+<span id="cb59-59"><a href="#cb59-59" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Log Loss'</span>)</span>
+<span id="cb59-60"><a href="#cb59-60" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Train vs Test Log Loss'</span>)</span>
+<span id="cb59-61"><a href="#cb59-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-62"><a href="#cb59-62" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb59-63"><a href="#cb59-63" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Training Accuracy: 0.8663929248262792, Training Log Loss: 0.3352042516295803
+Testing Accuracy: 0.8578648136449779, Testing Log Loss: 0.3442758714994835</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\srinivas\anaconda3\Lib\site-packages\sklearn\linear_model\_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+C:\Users\srinivas\AppData\Local\Temp\ipykernel_28792\2225796879.py:63: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()</code></pre>
+</div>
+</div>
+<div id="cell-44" class="cell" data-execution_count="50">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, log_loss</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'df' is your Pandas DataFrame with features, 'label', and 'weights' columns</span></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the DataFrame into features, labels, and weights</span></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df_di.drop([<span class="st">'label'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df_di[<span class="st">'label'</span>]</span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the data into training and testing sets</span></span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the model</span></span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>model_di <span class="op">=</span> LogisticRegression()</span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model using the sample_weight parameter</span></span>
+<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to extract the corresponding weights for the training samples</span></span>
+<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a>train_indices <span class="op">=</span> X_train.index</span>
+<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a>train_weights <span class="op">=</span> weights[train_indices]</span>
+<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a>model_di.fit(X_train, y_train, sample_weight<span class="op">=</span>train_weights)</span>
+<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Predictions</span></span>
+<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a>y_train_pred <span class="op">=</span> model_di.predict(X_train)</span>
+<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a>y_test_pred <span class="op">=</span> model_di.predict(X_test)</span>
+<span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Probability predictions for log loss calculation</span></span>
+<span id="cb62-31"><a href="#cb62-31" aria-hidden="true" tabindex="-1"></a>y_train_pred_proba <span class="op">=</span> model_di.predict_proba(X_train)</span>
+<span id="cb62-32"><a href="#cb62-32" aria-hidden="true" tabindex="-1"></a>y_test_pred_proba <span class="op">=</span> model_di.predict_proba(X_test)</span>
+<span id="cb62-33"><a href="#cb62-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-34"><a href="#cb62-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy</span></span>
+<span id="cb62-35"><a href="#cb62-35" aria-hidden="true" tabindex="-1"></a>train_accuracy <span class="op">=</span> accuracy_score(y_train, y_train_pred)</span>
+<span id="cb62-36"><a href="#cb62-36" aria-hidden="true" tabindex="-1"></a>test_accuracy <span class="op">=</span> accuracy_score(y_test, y_test_pred)</span>
+<span id="cb62-37"><a href="#cb62-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-38"><a href="#cb62-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate log loss</span></span>
+<span id="cb62-39"><a href="#cb62-39" aria-hidden="true" tabindex="-1"></a>train_loss <span class="op">=</span> log_loss(y_train, y_train_pred_proba)</span>
+<span id="cb62-40"><a href="#cb62-40" aria-hidden="true" tabindex="-1"></a>test_loss <span class="op">=</span> log_loss(y_test, y_test_pred_proba)</span>
+<span id="cb62-41"><a href="#cb62-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-42"><a href="#cb62-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Print errors and losses</span></span>
+<span id="cb62-43"><a href="#cb62-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Training Accuracy: </span><span class="sc">{</span>train_accuracy<span class="sc">}</span><span class="ss">, Training Log Loss: </span><span class="sc">{</span>train_loss<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb62-44"><a href="#cb62-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Testing Accuracy: </span><span class="sc">{</span>test_accuracy<span class="sc">}</span><span class="ss">, Testing Log Loss: </span><span class="sc">{</span>test_loss<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb62-45"><a href="#cb62-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-46"><a href="#cb62-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb62-47"><a href="#cb62-47" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb62-48"><a href="#cb62-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-49"><a href="#cb62-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy plot</span></span>
+<span id="cb62-50"><a href="#cb62-50" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb62-51"><a href="#cb62-51" aria-hidden="true" tabindex="-1"></a>plt.bar([<span class="st">'Train Accuracy'</span>, <span class="st">'Test Accuracy'</span>], [train_accuracy, test_accuracy], color<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'green'</span>])</span>
+<span id="cb62-52"><a href="#cb62-52" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Accuracy'</span>)</span>
+<span id="cb62-53"><a href="#cb62-53" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Train vs Test Accuracy'</span>)</span>
+<span id="cb62-54"><a href="#cb62-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-55"><a href="#cb62-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Log Loss plot</span></span>
+<span id="cb62-56"><a href="#cb62-56" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb62-57"><a href="#cb62-57" aria-hidden="true" tabindex="-1"></a>plt.bar([<span class="st">'Train Log Loss'</span>, <span class="st">'Test Log Loss'</span>], [train_loss, test_loss], color<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'green'</span>])</span>
+<span id="cb62-58"><a href="#cb62-58" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Log Loss'</span>)</span>
+<span id="cb62-59"><a href="#cb62-59" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Train vs Test Log Loss'</span>)</span>
+<span id="cb62-60"><a href="#cb62-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-61"><a href="#cb62-61" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb62-62"><a href="#cb62-62" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Training Accuracy: 0.8656822488945041, Training Log Loss: 0.3377688207025086
+Testing Accuracy: 0.8572331017056223, Testing Log Loss: 0.3468531284456185</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\srinivas\anaconda3\Lib\site-packages\sklearn\linear_model\_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+C:\Users\srinivas\AppData\Local\Temp\ipykernel_28792\789110131.py:62: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()</code></pre>
+</div>
+</div>
+<div id="cell-45" class="cell" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, log_loss</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'df_lfr' is your Pandas DataFrame with features and 'label' columns, </span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a><span class="co"># resulting from the LFR transformation</span></span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the DataFrame into features and labels</span></span>
+<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df_lfr.drop([<span class="st">'label'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df_lfr[<span class="st">'label'</span>]</span>
+<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the data into training and testing sets</span></span>
+<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y)</span>
+<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the model</span></span>
+<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a>model_lfr <span class="op">=</span> LogisticRegression()</span>
+<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model (no sample weights are needed as the data is already transformed by LFR)</span></span>
+<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a>model_lfr.fit(X_train, y_train, sample_weight<span class="op">=</span>train_weights)</span>
+<span id="cb65-22"><a href="#cb65-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-23"><a href="#cb65-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Predictions</span></span>
+<span id="cb65-24"><a href="#cb65-24" aria-hidden="true" tabindex="-1"></a>y_train_pred <span class="op">=</span> model_lfr.predict(X_train)</span>
+<span id="cb65-25"><a href="#cb65-25" aria-hidden="true" tabindex="-1"></a>y_test_pred <span class="op">=</span> model_lfr.predict(X_test)</span>
+<span id="cb65-26"><a href="#cb65-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-27"><a href="#cb65-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Probability predictions for log loss calculation</span></span>
+<span id="cb65-28"><a href="#cb65-28" aria-hidden="true" tabindex="-1"></a>y_train_pred_proba <span class="op">=</span> model_lfr.predict_proba(X_train)</span>
+<span id="cb65-29"><a href="#cb65-29" aria-hidden="true" tabindex="-1"></a>y_test_pred_proba <span class="op">=</span> model_lfr.predict_proba(X_test)</span>
+<span id="cb65-30"><a href="#cb65-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-31"><a href="#cb65-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy</span></span>
+<span id="cb65-32"><a href="#cb65-32" aria-hidden="true" tabindex="-1"></a>train_accuracy <span class="op">=</span> accuracy_score(y_train, y_train_pred)</span>
+<span id="cb65-33"><a href="#cb65-33" aria-hidden="true" tabindex="-1"></a>test_accuracy <span class="op">=</span> accuracy_score(y_test, y_test_pred)</span>
+<span id="cb65-34"><a href="#cb65-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-35"><a href="#cb65-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate log loss</span></span>
+<span id="cb65-36"><a href="#cb65-36" aria-hidden="true" tabindex="-1"></a>train_loss <span class="op">=</span> log_loss(y_train, y_train_pred_proba)</span>
+<span id="cb65-37"><a href="#cb65-37" aria-hidden="true" tabindex="-1"></a>test_loss <span class="op">=</span> log_loss(y_test, y_test_pred_proba)</span>
+<span id="cb65-38"><a href="#cb65-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-39"><a href="#cb65-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Print errors and losses</span></span>
+<span id="cb65-40"><a href="#cb65-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Training Accuracy: </span><span class="sc">{</span>train_accuracy<span class="sc">}</span><span class="ss">, Training Log Loss: </span><span class="sc">{</span>train_loss<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb65-41"><a href="#cb65-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Testing Accuracy: </span><span class="sc">{</span>test_accuracy<span class="sc">}</span><span class="ss">, Testing Log Loss: </span><span class="sc">{</span>test_loss<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb65-42"><a href="#cb65-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-43"><a href="#cb65-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb65-44"><a href="#cb65-44" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb65-45"><a href="#cb65-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-46"><a href="#cb65-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy plot</span></span>
+<span id="cb65-47"><a href="#cb65-47" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb65-48"><a href="#cb65-48" aria-hidden="true" tabindex="-1"></a>plt.bar([<span class="st">'Train Accuracy'</span>, <span class="st">'Test Accuracy'</span>], [train_accuracy, test_accuracy], color<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'green'</span>])</span>
+<span id="cb65-49"><a href="#cb65-49" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Accuracy'</span>)</span>
+<span id="cb65-50"><a href="#cb65-50" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Train vs Test Accuracy'</span>)</span>
+<span id="cb65-51"><a href="#cb65-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-52"><a href="#cb65-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Log Loss plot</span></span>
+<span id="cb65-53"><a href="#cb65-53" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb65-54"><a href="#cb65-54" aria-hidden="true" tabindex="-1"></a>plt.bar([<span class="st">'Train Log Loss'</span>, <span class="st">'Test Log Loss'</span>], [train_loss, test_loss], color<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'green'</span>])</span>
+<span id="cb65-55"><a href="#cb65-55" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Log Loss'</span>)</span>
+<span id="cb65-56"><a href="#cb65-56" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Train vs Test Log Loss'</span>)</span>
+<span id="cb65-57"><a href="#cb65-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-58"><a href="#cb65-58" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb65-59"><a href="#cb65-59" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Training Accuracy: 0.5713044851547694, Training Log Loss: 0.6770592058568611
+Testing Accuracy: 0.5713834491471889, Testing Log Loss: 0.6836813366149022</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\srinivas\AppData\Local\Temp\ipykernel_28792\3296956902.py:59: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()</code></pre>
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/srinivassundar98\.github\.io\/Ensuring-Fair-Play\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

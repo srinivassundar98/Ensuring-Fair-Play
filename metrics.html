@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3.2 First models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d4be639c637f3db3c684c66cefad7e0c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+if (typeof require !== 'undefined') {
+require.undef("plotly");
+requirejs.config({
+    paths: {
+        'plotly': ['https://cdn.plot.ly/plotly-2.31.1.min']
+    }
+});
+require(['plotly'], function(Plotly) {
+    window._Plotly = Plotly;
+});
+}
+</script>
+
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><a id="3.2">3.2 First models</a></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>::: {#cell-1 .cell _uuid=‘832049268e597621b8995d308611ce2dac7e471c’ execution_count=243}</p>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># data manipulation libraries</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Graphs libraries</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> patches</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'seaborn-v0_8-whitegrid'</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.offline <span class="im">as</span> py</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>py.init_notebook_mode(connected<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.tools <span class="im">as</span> tls</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.figure_factory <span class="im">as</span> ff</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotly <span class="im">import</span> tools</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Libraries to study</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.datasets <span class="im">import</span> StandardDataset</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.metrics <span class="im">import</span> BinaryLabelDatasetMetric, ClassificationMetric</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.algorithms.preprocessing <span class="im">import</span> LFR, Reweighing</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.algorithms.inprocessing <span class="im">import</span> AdversarialDebiasing, PrejudiceRemover</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.algorithms.postprocessing <span class="im">import</span> CalibratedEqOddsPostprocessing, EqOddsPostprocessing, RejectOptionClassification</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># ML libraries</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> ConfusionMatrixDisplay</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix, accuracy_score, f1_score, roc_curve, auc</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MinMaxScaler, LabelEncoder</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Design libraries</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown, display</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>:::</p>
+<div id="cell-2" class="cell" data-execution_count="182">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.datasets <span class="im">import</span> MEPSDataset19</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dataset_orig_panel19<span class="op">=</span>MEPSDataset19()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-3" class="cell" data-execution_count="183">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sens_ind <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sens_attr <span class="op">=</span> dataset_orig_panel19.protected_attribute_names[sens_ind]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>unprivileged_groups <span class="op">=</span> [{sens_attr: v} <span class="cf">for</span> v <span class="kw">in</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                    dataset_orig_panel19.unprivileged_protected_attributes[sens_ind]]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>privileged_groups <span class="op">=</span> [{sens_attr: v} <span class="cf">for</span> v <span class="kw">in</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                    dataset_orig_panel19.privileged_protected_attributes[sens_ind]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I’d like to remember that the goal of this Kernel is not to get a performant model, but the main goal is to find out how we can prevent bias on our model. So I will just construct a simple Random Forest model.</p>
+<section id="split-into-train-and-test-set" class="level4">
+<h4 class="anchored" data-anchor-id="split-into-train-and-test-set">Split into train and test set</h4>
+<div id="cell-5" class="cell" data-execution_count="184">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dataset_orig_panel19_train, dataset_orig_panel19_test <span class="op">=</span> dataset_orig_panel19.split([<span class="fl">0.7</span>], shuffle<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"#### Train Dataset shape"</span>))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Perpetrator Sex :"</span>,dataset_orig_panel19_train.features.shape)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"#### Test Dataset shape"</span>))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Perpetrator Sex :"</span>,dataset_orig_panel19_test.features.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="train-dataset-shape" class="level4 cell-output cell-output-display cell-output-markdown">
+<h4 class="anchored" data-anchor-id="train-dataset-shape">Train Dataset shape</h4>
+</section>
+<div class="cell-output cell-output-stdout">
+<pre><code>Perpetrator Sex : (11081, 138)</code></pre>
+</div>
+<section id="test-dataset-shape" class="level4 cell-output cell-output-display cell-output-markdown">
+<h4 class="anchored" data-anchor-id="test-dataset-shape">Test Dataset shape</h4>
+</section>
+<div class="cell-output cell-output-stdout">
+<pre><code>Perpetrator Sex : (4749, 138)</code></pre>
+</div>
+</div>
+</section>
+<section id="training-the-model-classic-random-forest" class="level4">
+<h4 class="anchored" data-anchor-id="training-the-model-classic-random-forest">Training the model : classic Random Forest</h4>
+<div id="cell-7" class="cell" data-execution_count="197">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-8" class="cell" data-execution_count="198">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Train and save the models</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>rf_orig_sex <span class="op">=</span> LogisticRegression().fit(dataset_orig_panel19_train.features, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                     dataset_orig_panel19_train.labels.ravel(), </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                     sample_weight<span class="op">=</span>dataset_orig_panel19_train.instance_weights)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="predict-on-test-set" class="level3">
+<h3 class="anchored" data-anchor-id="predict-on-test-set">Predict on test set</h3>
+<div id="cell-10" class="cell" data-execution_count="199">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>X_test_sex <span class="op">=</span> dataset_orig_panel19_test.features</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y_test_sex <span class="op">=</span> dataset_orig_panel19_test.labels.ravel()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>::: {#cell-11 .cell _kg_hide-input=‘false’ execution_count=196}</p>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># algo_metrics = pd.DataFrame(columns=['model', 'fair_metrics', 'prediction', 'probs'])</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># def add_to_df_algo_metrics(algo_metrics, model, fair_metrics, preds, probs, name):</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Using loc to add a new row to the DataFrame directly</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     algo_metrics.loc[name] = [model, fair_metrics, preds, probs]</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     return algo_metrics</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>:::</p>
+</section>
+<section id="preethi-_-donot-delete" class="level3">
+<h3 class="anchored" data-anchor-id="preethi-_-donot-delete">PREETHI _ DONOT DELETE</h3>
+</section>
+<section id="metrics" class="level3">
+<h3 class="anchored" data-anchor-id="metrics">METRICS</h3>
+<div id="cell-14" class="cell" data-execution_count="254">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_model_performance(X_test, y_true, y_pred, probs):</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    accuracy <span class="op">=</span> accuracy_score(y_true, y_pred)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    matrix <span class="op">=</span> confusion_matrix(y_true, y_pred)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    f1 <span class="op">=</span> f1_score(y_true, y_pred)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    preds <span class="op">=</span> probs[:, <span class="dv">1</span>]</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    fpr, tpr, threshold <span class="op">=</span> roc_curve(y_true, preds)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    roc_auc <span class="op">=</span> auc(fpr, tpr)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> accuracy, matrix, f1, fpr, tpr, roc_auc</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_confusion_matrix(matrix):</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(matrix, annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">'OrRd'</span>, fmt<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'Confusion Matrix'</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'True Label'</span>)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Predicted Label'</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_roc_curve(fpr, tpr, roc_auc):</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> px.area(</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span>fpr, y<span class="op">=</span>tpr,</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="ss">f'ROC curve ( Area = </span><span class="sc">{</span>roc_auc<span class="sc">:.2f}</span><span class="ss">)'</span>,</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>        labels<span class="op">=</span><span class="bu">dict</span>(x<span class="op">=</span><span class="st">'False Positive Rate'</span>, y<span class="op">=</span><span class="st">'True Positive Rate'</span>),</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>        width<span class="op">=</span><span class="dv">600</span>, height<span class="op">=</span><span class="dv">600</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    fig.add_shape(</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>        <span class="bu">type</span><span class="op">=</span><span class="st">'line'</span>, line<span class="op">=</span><span class="bu">dict</span>(dash<span class="op">=</span><span class="st">'dash'</span>, color<span class="op">=</span><span class="st">'navy'</span>, width<span class="op">=</span><span class="dv">2</span>),</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>        x0<span class="op">=</span><span class="dv">0</span>, x1<span class="op">=</span><span class="dv">1</span>, y0<span class="op">=</span><span class="dv">0</span>, y1<span class="op">=</span><span class="dv">1</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    fig.update_yaxes(scaleanchor<span class="op">=</span><span class="st">"x"</span>, scaleratio<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>    fig.update_xaxes(constrain<span class="op">=</span><span class="st">'domain'</span>)</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>    fig.add_vrect(x0<span class="op">=</span><span class="dv">0</span>, x1<span class="op">=</span><span class="fl">0.5</span>, fillcolor<span class="op">=</span><span class="st">"red"</span>, opacity<span class="op">=</span><span class="fl">0.1</span>, line_width<span class="op">=</span><span class="dv">0</span>)  </span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>    fig.add_vrect(x0<span class="op">=</span><span class="fl">0.5</span>, x1<span class="op">=</span><span class="dv">1</span>, fillcolor<span class="op">=</span><span class="st">"green"</span>, opacity<span class="op">=</span><span class="fl">0.1</span>, line_width<span class="op">=</span><span class="dv">0</span>) </span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>    fig.show()</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="accuracy-and-f1-score" class="level3">
+<h3 class="anchored" data-anchor-id="accuracy-and-f1-score">ACCURACY and F1 SCORE</h3>
+<div id="cell-16" class="cell" data-execution_count="219">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> model_performance(model, X_test, y_true):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    probs <span class="op">=</span> model.predict_proba(X_test)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    accuracy, matrix, f1, fpr, tpr, roc_auc <span class="op">=</span> get_model_performance(X_test, y_true, y_pred, probs)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    display(Markdown(<span class="st">'#### Accuracy of the model :'</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(accuracy)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    display(Markdown(<span class="st">'#### F1 score of the model :'</span>))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(f1)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>model_performance(rf_orig_sex, dataset_orig_panel19_test.features, y_test_sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="accuracy-of-the-model" class="level4 cell-output cell-output-display cell-output-markdown">
+<h4 class="anchored" data-anchor-id="accuracy-of-the-model">Accuracy of the model :</h4>
+</section>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.866919351442409</code></pre>
+</div>
+<section id="f1-score-of-the-model" class="level4 cell-output cell-output-display cell-output-markdown">
+<h4 class="anchored" data-anchor-id="f1-score-of-the-model">F1 score of the model :</h4>
+</section>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.5182926829268293</code></pre>
+</div>
+</div>
+</section>
+<section id="roc-curve" class="level3">
+<h3 class="anchored" data-anchor-id="roc-curve">ROC CURVE</h3>
+<div id="cell-18" class="cell" data-execution_count="249">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ROC_Plot(model, X_test, y_true):</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    probs <span class="op">=</span> model.predict_proba(X_test)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    accuracy, matrix, f1, fpr, tpr, roc_auc <span class="op">=</span> get_model_performance(X_test, y_true, y_pred, probs)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    plot_roc_curve(fpr, tpr, roc_auc)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>ROC_Plot(rf_orig_sex, dataset_orig_panel19_test.features, y_test_sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="f4c6e42b-d840-48c4-9d9b-23b7f44dad7b" class="plotly-graph-div" style="height:600px; width:600px;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("f4c6e42b-d840-48c4-9d9b-23b7f44dad7b")) {                    Plotly.newPlot(                        "f4c6e42b-d840-48c4-9d9b-23b7f44dad7b",                        [{"fillpattern":{"shape":""},"hovertemplate":"False Positive Rate=%{x}\u003cbr\u003eTrue Positive Rate=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","line":{"color":"#636efa"},"marker":{"symbol":"circle"},"mode":"lines","name":"","orientation":"v","showlegend":false,"stackgroup":"1","x":[0.0,0.0,0.0002531004808909137,0.0002531004808909137,0.0005062009617818274,0.0005062009617818274,0.0007593014426727411,0.0007593014426727411,0.0010124019235636548,0.0010124019235636548,0.0012655024044545685,0.0012655024044545685,0.0015186028853454822,0.0015186028853454822,0.001771703366236396,0.001771703366236396,0.0020248038471273096,0.0020248038471273096,0.002277904328018223,0.002277904328018223,0.0030372057706909645,0.0030372057706909645,0.003290306251581878,0.003290306251581878,0.0037965072133637054,0.0037965072133637054,0.004049607694254619,0.004049607694254619,0.004302708175145533,0.004302708175145533,0.00480890913692736,0.00480890913692736,0.005062009617818274,0.005062009617818274,0.005315110098709187,0.005315110098709187,0.005821311060491015,0.005821311060491015,0.006074411541381929,0.006074411541381929,0.006327512022272842,0.006327512022272842,0.00683371298405467,0.00683371298405467,0.007086813464945584,0.007086813464945584,0.007593014426727411,0.007593014426727411,0.007846114907618324,0.007846114907618324,0.008099215388509239,0.008099215388509239,0.008352315869400152,0.008352315869400152,0.008605416350291066,0.008605416350291066,0.009111617312072893,0.009111617312072893,0.009364717792963807,0.009364717792963807,0.00961781827385472,0.00961781827385472,0.009870918754745633,0.009870918754745633,0.010124019235636548,0.010124019235636548,0.010377119716527461,0.010377119716527461,0.010883320678309289,0.010883320678309289,0.011136421159200202,0.011136421159200202,0.011389521640091117,0.011389521640091117,0.01164262212098203,0.01164262212098203,0.012148823082763858,0.012148823082763858,0.012401923563654771,0.012401923563654771,0.012908124525436599,0.012908124525436599,0.013161225006327512,0.013161225006327512,0.013414325487218427,0.013414325487218427,0.01366742596810934,0.01366742596810934,0.013920526449000253,0.013920526449000253,0.01442672741078208,0.01442672741078208,0.014679827891672994,0.014679827891672994,0.014932928372563908,0.014932928372563908,0.015186028853454821,0.015186028853454821,0.015692229815236648,0.015692229815236648,0.015945330296127564,0.015945330296127564,0.016704631738800303,0.016704631738800303,0.016957732219691216,0.016957732219691216,0.017210832700582133,0.017210832700582133,0.017970134143254872,0.017970134143254872,0.018223234624145785,0.018223234624145785,0.018476335105036698,0.018476335105036698,0.018729435585927615,0.018729435585927615,0.01923563654770944,0.01923563654770944,0.019741837509491267,0.019741837509491267,0.019994937990382183,0.019994937990382183,0.020248038471273096,0.020248038471273096,0.02050113895216401,0.02050113895216401,0.020754239433054922,0.020754239433054922,0.021766641356618578,0.021766641356618578,0.02201974183750949,0.02201974183750949,0.022272842318400404,0.022272842318400404,0.022779043280182234,0.022779043280182234,0.023032143761073147,0.023032143761073147,0.023791445203745886,0.023791445203745886,0.02455074664641863,0.02455074664641863,0.024803847127309542,0.024803847127309542,0.025563148569982284,0.025563148569982284,0.026575550493545937,0.026575550493545937,0.02733485193621868,0.02733485193621868,0.027587952417109592,0.027587952417109592,0.027841052898000505,0.027841052898000505,0.028347253859782335,0.028347253859782335,0.028600354340673248,0.028600354340673248,0.02885345482156416,0.02885345482156416,0.029359655783345987,0.029359655783345987,0.029612756264236904,0.029612756264236904,0.03011895722601873,0.03011895722601873,0.030372057706909643,0.030372057706909643,0.030625158187800556,0.030625158187800556,0.03087825866869147,0.03087825866869147,0.031131359149582385,0.031131359149582385,0.031384459630473295,0.031384459630473295,0.03214376107314604,0.03214376107314604,0.032396861554036954,0.032396861554036954,0.032649962034927864,0.032649962034927864,0.0331561629967097,0.0331561629967097,0.03366236395849152,0.03366236395849152,0.03416856492027335,0.03416856492027335,0.034674765882055175,0.034674765882055175,0.03568716780561883,0.03568716780561883,0.035940268286509744,0.035940268286509744,0.03897747405720071,0.03897747405720071,0.039230574538091624,0.039230574538091624,0.03973677549987345,0.03973677549987345,0.0407491774234371,0.0407491774234371,0.04100227790432802,0.04100227790432802,0.04125537838521893,0.04125537838521893,0.04176157934700076,0.04176157934700076,0.04226778030878259,0.04226778030878259,0.0425208807896735,0.0425208807896735,0.042773981270564414,0.042773981270564414,0.04328018223234624,0.04328018223234624,0.043533282713237156,0.043533282713237156,0.04403948367501898,0.04403948367501898,0.0442925841559099,0.0442925841559099,0.04454568463680081,0.04454568463680081,0.044798785117691725,0.044798785117691725,0.04555808656036447,0.04555808656036447,0.04581118704125538,0.04581118704125538,0.04657048848392812,0.04657048848392812,0.047076689445709946,0.047076689445709946,0.04758289040749177,0.04758289040749177,0.04783599088838269,0.04783599088838269,0.0480890913692736,0.0480890913692736,0.04986079473551,0.04986079473551,0.05011389521640091,0.05011389521640091,0.050366995697291826,0.050366995697291826,0.051885598582637305,0.051885598582637305,0.05213869906352822,0.05213869906352822,0.05239179954441914,0.05239179954441914,0.05264490002531005,0.05264490002531005,0.053910402429764616,0.053910402429764616,0.05441660339154644,0.05441660339154644,0.0554290053151101,0.0554290053151101,0.05593520627689193,0.05593520627689193,0.05618830675778284,0.05618830675778284,0.05694760820045558,0.05694760820045558,0.057200708681346496,0.057200708681346496,0.05821311060491015,0.05821311060491015,0.058466211085801065,0.058466211085801065,0.058719311566691974,0.058719311566691974,0.05897241204758289,0.05897241204758289,0.059731713490255633,0.059731713490255633,0.06023791445203746,0.06023791445203746,0.0609972158947102,0.0609972158947102,0.06125031637560111,0.06125031637560111,0.06150341685649203,0.06150341685649203,0.062009617818273854,0.062009617818273854,0.06251581878005569,0.06251581878005569,0.06555302455074664,0.06555302455074664,0.06580612503163756,0.06580612503163756,0.06605922551252848,0.06605922551252848,0.06707162743609213,0.06707162743609213,0.06808402935965578,0.06808402935965578,0.06859023032143761,0.06859023032143761,0.06884333080232853,0.06884333080232853,0.06909643128321943,0.06909643128321943,0.06934953176411035,0.06934953176411035,0.070361933687674,0.070361933687674,0.07112123513034675,0.07112123513034675,0.0721336370539104,0.0721336370539104,0.07238673753480132,0.07238673753480132,0.07263983801569222,0.07263983801569222,0.07339913945836497,0.07339913945836497,0.07365223993925589,0.07365223993925589,0.07390534042014679,0.07390534042014679,0.07466464186281954,0.07466464186281954,0.07491774234371046,0.07491774234371046,0.07668944570994685,0.07668944570994685,0.07719564667172868,0.07719564667172868,0.07896735003796507,0.07896735003796507,0.08048595292331055,0.08048595292331055,0.08073905340420147,0.08073905340420147,0.08200455580865604,0.08200455580865604,0.08225765628954695,0.08225765628954695,0.08251075677043786,0.08251075677043786,0.08276385725132877,0.08276385725132877,0.08352315869400152,0.08352315869400152,0.08402935965578334,0.08402935965578334,0.08428246013667426,0.08428246013667426,0.08453556061756518,0.08453556061756518,0.085041761579347,0.085041761579347,0.08554796254112883,0.08554796254112883,0.08630726398380156,0.08630726398380156,0.0868134649455834,0.0868134649455834,0.08833206783092888,0.08833206783092888,0.0885851683118198,0.0885851683118198,0.08909136927360162,0.08909136927360162,0.08959757023538345,0.08959757023538345,0.08985067071627437,0.08985067071627437,0.09010377119716527,0.09010377119716527,0.09035687167805619,0.09035687167805619,0.0906099721589471,0.0906099721589471,0.09136927360161984,0.09136927360161984,0.09187547456340167,0.09187547456340167,0.09212857504429259,0.09212857504429259,0.09288787648696532,0.09288787648696532,0.09364717792963807,0.09364717792963807,0.09415337889141989,0.09415337889141989,0.09465957985320173,0.09465957985320173,0.09516578081498354,0.09516578081498354,0.09541888129587446,0.09541888129587446,0.09896228802834725,0.09896228802834725,0.10022779043280182,0.10022779043280182,0.10199949379903822,0.10199949379903822,0.10275879524171096,0.10275879524171096,0.10427739812705644,0.10427739812705644,0.1052898000506201,0.1052898000506201,0.10655530245507466,0.10655530245507466,0.10782080485952923,0.10782080485952923,0.10858010630220197,0.10858010630220197,0.10883320678309288,0.10883320678309288,0.1090863072639838,0.1090863072639838,0.10959250822576563,0.10959250822576563,0.11035180966843837,0.11035180966843837,0.11060491014932929,0.11060491014932929,0.11136421159200202,0.11136421159200202,0.11161731207289294,0.11161731207289294,0.11187041255378385,0.11187041255378385,0.11212351303467477,0.11212351303467477,0.11237661351556567,0.11237661351556567,0.11313591495823842,0.11313591495823842,0.11338901543912934,0.11338901543912934,0.11516071880536573,0.11516071880536573,0.11566691976714756,0.11566691976714756,0.11592002024803848,0.11592002024803848,0.11743862313338395,0.11743862313338395,0.11794482409516578,0.11794482409516578,0.1181979245760567,0.1181979245760567,0.11845102505694761,0.11845102505694761,0.11971652746140218,0.11971652746140218,0.11996962794229309,0.11996962794229309,0.12174133130852949,0.12174133130852949,0.12250063275120222,0.12250063275120222,0.12300683371298406,0.12300683371298406,0.1252847380410023,0.1252847380410023,0.12832194381169323,0.12832194381169323,0.13186535054416604,0.13186535054416604,0.1333839534295115,0.1333839534295115,0.13389015439129334,0.13389015439129334,0.1346494558339661,0.1346494558339661,0.13566185775752973,0.13566185775752973,0.13844596304732978,0.13844596304732978,0.1386990635282207,0.1386990635282207,0.13895216400911162,0.13895216400911162,0.13920526449000253,0.13920526449000253,0.13945836497089345,0.13945836497089345,0.13996456593267528,0.13996456593267528,0.14173626929891167,0.14173626929891167,0.14350797266514806,0.14350797266514806,0.14452037458871173,0.14452037458871173,0.14477347506960264,0.14477347506960264,0.1475575803594027,0.1475575803594027,0.14907618324474817,0.14907618324474817,0.14983548468742092,0.14983548468742092,0.15008858516831183,0.15008858516831183,0.1513540875727664,0.1513540875727664,0.1516071880536573,0.1516071880536573,0.15236648949633005,0.15236648949633005,0.15312579093900278,0.15312579093900278,0.1533788914198937,0.1533788914198937,0.15742849911414833,0.15742849911414833,0.15869400151860288,0.15869400151860288,0.16021260440394836,0.16021260440394836,0.1607188053657302,0.1607188053657302,0.16122500632751202,0.16122500632751202,0.16324981017463933,0.16324981017463933,0.16704631738800305,0.16704631738800305,0.16805871931156668,0.16805871931156668,0.16881802075423943,0.16881802075423943,0.16907112123513035,0.16907112123513035,0.16932422171602127,0.16932422171602127,0.17236142748671224,0.17236142748671224,0.17261452796760313,0.17261452796760313,0.17312072892938496,0.17312072892938496,0.17337382941027588,0.17337382941027588,0.17413313085294863,0.17413313085294863,0.17438623133383954,0.17438623133383954,0.1756517337382941,0.1756517337382941,0.17691723614274868,0.17691723614274868,0.1771703366236396,0.1771703366236396,0.17818273854720323,0.17818273854720323,0.18172614527967604,0.18172614527967604,0.1832447481650215,0.1832447481650215,0.18375094912680334,0.18375094912680334,0.18425715008858518,0.18425715008858518,0.1845102505694761,0.1845102505694761,0.1852695520121488,0.1852695520121488,0.18729435585927615,0.18729435585927615,0.19134396355353075,0.19134396355353075,0.1926094659579853,0.1926094659579853,0.19463426980511264,0.19463426980511264,0.19488737028600353,0.19488737028600353,0.19539357124778536,0.19539357124778536,0.19564667172867628,0.19564667172867628,0.19691217413313086,0.19691217413313086,0.19767147557580358,0.19767147557580358,0.19944317894204,0.19944317894204,0.20172108327005822,0.20172108327005822,0.20399898759807644,0.20399898759807644,0.20450518855985828,0.20450518855985828,0.20602379144520375,0.20602379144520375,0.21007339913945836,0.21007339913945836,0.21133890154391294,0.21133890154391294,0.2120982029865857,0.2120982029865857,0.2126044039483675,0.2126044039483675,0.21361680587193116,0.21361680587193116,0.21462920779549483,0.21462920779549483,0.21488230827638571,0.21488230827638571,0.2161478106808403,0.2161478106808403,0.21690711212351305,0.21690711212351305,0.21741331308529485,0.21741331308529485,0.22272842318400404,0.22272842318400404,0.2255125284738041,0.2255125284738041,0.22627182991647685,0.22627182991647685,0.22652493039736776,0.22652493039736776,0.22728423184004048,0.22728423184004048,0.22779043280182232,0.22779043280182232,0.2290559352062769,0.2290559352062769,0.23411794482409518,0.23411794482409518,0.23462414578587698,0.23462414578587698,0.23588964819033156,0.23588964819033156,0.23892685396102253,0.23892685396102253,0.24095165780814984,0.24095165780814984,0.24525436598329536,0.24525436598329536,0.24854467223487725,0.24905087319665908,0.25082257656289547,0.25082257656289547,0.25183497848645914,0.25183497848645914,0.25411288281447736,0.25411288281447736,0.25613768666160464,0.25613768666160464,0.25841559098962286,0.25841559098962286,0.2586686914705138,0.2586686914705138,0.2594279929131865,0.2594279929131865,0.2601872943558593,0.2601872943558593,0.26297139964565935,0.26297139964565935,0.2644900025310048,0.2644900025310048,0.2718299164768413,0.2718299164768413,0.27689192609465957,0.27689192609465957,0.2791698304226778,0.2791698304226778,0.2796760313844596,0.2796760313844596,0.28043533282713234,0.28043533282713234,0.28347253859782334,0.28347253859782334,0.28929384965831434,0.28929384965831434,0.2941027587952417,0.2941027587952417,0.2968868640850418,0.2968868640850418,0.30194887370286005,0.30194887370286005,0.304986079473551,0.304986079473551,0.3057453809162237,0.3057453809162237,0.30625158187800555,0.30625158187800555,0.3082763857251329,0.3082763857251329,0.3087825866869147,0.3087825866869147,0.31030118957226016,0.31030118957226016,0.3130852948620602,0.3130852948620602,0.31333839534295116,0.31333839534295116,0.313844596304733,0.313844596304733,0.31485699822829666,0.31485699822829666,0.3163756011136421,0.3163756011136421,0.31738800303720577,0.31738800303720577,0.31915970640344216,0.31915970640344216,0.3201721083270058,0.3201721083270058,0.32093140976967854,0.32093140976967854,0.3229562136168059,0.3229562136168059,0.3234624145785877,0.3234624145785877,0.3237155150594786,0.3237155150594786,0.3249810174639332,0.3249810174639332,0.3275120222728423,0.3275120222728423,0.3308023285244242,0.33130852948620604,0.334345735256897,0.334345735256897,0.3345988357377879,0.3345988357377879,0.3358643381422425,0.3358643381422425,0.33687674006580615,0.33687674006580615,0.33763604150847887,0.33763604150847887,0.3381422424702607,0.3381422424702607,0.33864844343204253,0.33864844343204253,0.34117944824095164,0.34117944824095164,0.3419387496836244,0.3419387496836244,0.3424449506454062,0.3424449506454062,0.3447228549734245,0.3447228549734245,0.34522905593520625,0.34522905593520625,0.34649455833966086,0.34649455833966086,0.35079726651480636,0.3513034674765882,0.3530751708428246,0.3530751708428246,0.3550999746899519,0.3550999746899519,0.35560617565173375,0.35560617565173375,0.35788407997975197,0.35788407997975197,0.36876740065806124,0.36876740065806124,0.37028600354340674,0.37028600354340674,0.3738294102758795,0.3738294102758795,0.37509491268033407,0.37509491268033407,0.3763604150847887,0.3763604150847887,0.38015692229815234,0.38015692229815234,0.38243482662617057,0.38243482662617057,0.3837003290306252,0.3837003290306252,0.38395342951151606,0.38395342951151606,0.38547203239686156,0.38547203239686156,0.38648443432042523,0.38648443432042523,0.38724373576309795,0.38724373576309795,0.3882561376866616,0.3882561376866616,0.39458364970893445,0.39458364970893445,0.4069855732725892,0.4069855732725892,0.40951657808149833,0.40951657808149833,0.4125537838521893,0.4125537838521893,0.41483168818020755,0.41483168818020755,0.41559098962288027,0.41559098962288027,0.4196405973171349,0.4196405973171349,0.42217160212604404,0.42217160212604404,0.42444950645406226,0.42444950645406226,0.42470260693495315,0.425208807896735,0.4267274107820805,0.4267274107820805,0.42925841559098965,0.42925841559098965,0.43153631991900787,0.43153631991900787,0.4325487218425715,0.4325487218425715,0.4345735256896988,0.4345735256896988,0.43533282713237154,0.43533282713237154,0.44064793723108076,0.44064793723108076,0.4436851430017717,0.44393824348266264,0.44495064540622625,0.44495064540622625,0.44621614781068086,0.44672234877246264,0.4533029612756264,0.45380916223740825,0.4558339660845356,0.4563401670463174,0.45963047329789924,0.45963047329789924,0.46292077954948113,0.46292077954948113,0.46646418628195396,0.46646418628195396,0.4672234877246267,0.4672234877246267,0.47000759301442674,0.47000759301442674,0.47051379397620857,0.47557580359402685,0.47557580359402685,0.47785370792204507,0.47785370792204507,0.4806378132118451,0.4806378132118451,0.4819033156162997,0.4824095165780815,0.48696532523411795,0.4874715261958998,0.49253353581371806,0.49253353581371806,0.4973424449506454,0.4973424449506454,0.5001265502404455,0.5001265502404455,0.5039230574538092,0.5039230574538092,0.5046823588964819,0.5046823588964819,0.5059478613009365,0.5059478613009365,0.5089850670716274,0.5089850670716274,0.5097443685143002,0.510250569476082,0.5110098709187547,0.5110098709187547,0.5158187800556822,0.5163249810174639,0.5229055935206277,0.5234117944824095,0.5267021007339914,0.5272083016957733,0.5401164262212098,0.5406226271829917,0.5416350291065553,0.5416350291065553,0.5444191343963554,0.5444191343963554,0.5446722348772463,0.5446722348772463,0.55403695267021,0.5545431536319919,0.5550493545937737,0.5550493545937737,0.5558086560364465,0.5558086560364465,0.557074158440901,0.5575803594026829,0.5649202733485194,0.5649202733485194,0.5702353834472286,0.5702353834472286,0.5704884839281195,0.5704884839281195,0.5715008858516831,0.5715008858516831,0.577575297393065,0.577575297393065,0.577828397873956,0.577828397873956,0.583396608453556,0.5841559098962288,0.5851683118197925,0.5851683118197925,0.5889648190331561,0.5889648190331561,0.5897241204758289,0.5897241204758289,0.5978233358643381,0.59832953682612,0.6028853454821564,0.6028853454821564,0.6061756517337383,0.6066818526955201,0.615793470007593,0.615793470007593,0.6198430777018477,0.6198430777018477,0.6221209820298659,0.6221209820298659,0.6266767906859023,0.6266767906859023,0.627689192609466,0.627689192609466,0.6279422930903569,0.6284484940521387,0.6375601113642116,0.6375601113642116,0.6411035180966844,0.6416097190584662,0.6535054416603392,0.6535054416603392,0.659832953682612,0.6603391546443939,0.6608453556061756,0.6608453556061756,0.6613515565679575,0.6621108580106302,0.6626170589724121,0.6626170589724121,0.6633763604150847,0.6638825613768666,0.6694507719564667,0.6694507719564667,0.6742596810933941,0.674765882055176,0.6757782839787395,0.6765375854214123,0.680587193115667,0.680587193115667,0.6815995950392306,0.6821057960010124,0.6907112123513035,0.6912174133130853,0.6924829157175398,0.6934953176411035,0.6945077195646672,0.6945077195646672,0.6967856238926854,0.6967856238926854,0.7051379397620855,0.7056441407238674,0.7061503416856492,0.706656542647431,0.7145026575550494,0.7145026575550494,0.7307010883320678,0.7312072892938497,0.7327258921791951,0.7334851936218679,0.7344975955454315,0.7352568969881043,0.7357630979498861,0.7365223993925588,0.7370286003543407,0.7375348013161225,0.7395596051632498,0.7403189066059226,0.7415844090103771,0.7415844090103771,0.7481650215135409,0.7481650215135409,0.7512022272842318,0.7517084282460137,0.7519615287269046,0.7524677296886864,0.753733232093141,0.753733232093141,0.7643634522905594,0.7643634522905594,0.7663882561376867,0.7668944570994685,0.7694254619083776,0.7699316628701595,0.7717033662363959,0.7722095671981777,0.7754998734497596,0.7760060744115413,0.7848645912427233,0.7853707922045052,0.7873955960516325,0.7879017970134143,0.7922045051885599,0.7927107061503417,0.7980258162490509,0.7985320172108327,0.8000506200961782,0.8000506200961782,0.8020754239433054,0.8025816249050873,0.803594026828651,0.803594026828651,0.8046064287522147,0.8061250316375601,0.8066312325993419,0.8078967350037966,0.8078967350037966,0.8180207542394331,0.8192862566438877,0.8197924576056694,0.8202986585674513,0.8223234624145785,0.8228296633763604,0.8266261705897241,0.827132371551506,0.8332067830928879,0.8337129840546698,0.8352315869400152,0.835737787901797,0.8372563907871425,0.8377625917489243,0.8380156922298152,0.838774993672488,0.8395342951151608,0.8400404960769425,0.8430777018476335,0.8435839028094153,0.8466211085801063,0.8471273095418881,0.84763351050367,0.8481397114654518,0.8494052138699063,0.85041761579347,0.8567451278157429,0.8577575297393065,0.8610478359908884,0.8615540369526702,0.8618071374335611,0.862313338395343,0.8625664388762339,0.8633257403189066,0.8635788407997975,0.8640850417615793,0.8661098456087066,0.8666160465704885,0.868134649455834,0.8686408504176157,0.8701594533029613,0.8706656542647431,0.8714249557074158,0.8719311566691976,0.8726904581118704,0.8737028600354341,0.8752214629207795,0.8757276638825614,0.8762338648443432,0.8772462667679068,0.8785117691723614,0.8792710706150342,0.8795241710959251,0.880030372057707,0.8820551759048342,0.882814477347507,0.8866109845608706,0.8873702860035434,0.8942039989875981,0.89471019994938,0.8957226018729436,0.8957226018729436,0.9093900278410529,0.9098962288028347,0.9106555302455075,0.9111617312072893,0.9154644393824348,0.9154644393824348,0.9164768413059985,0.9169830422677803,0.920779549481144,0.920779549481144,0.926600860541635,0.9271070615034168,0.9291318653505442,0.9298911667932169,0.9347000759301443,0.9352062768919261,0.935459377372817,0.9359655783345988,0.9362186788154897,0.9367248797772716,0.9377372817008353,0.9387496836243989,0.9397620855479626,0.9410275879524171,0.9415337889141989,0.9430523917995444,0.9435585927613263,0.9438116932422171,0.9438116932422171,0.9460895975702354,0.9460895975702354,0.9463426980511263,0.9468488990129081,0.9506454062262718,0.9511516071880537,0.9524171095925082,0.9534295115160719,0.9552012148823082,0.955960516324981,0.9574791192103265,0.9582384206529992,0.958744621614781,0.9595039230574538,0.9605163249810175,0.9610225259427992,0.9635535307517085,0.9640597317134902,0.976461655277145,0.9769678562389269,0.9792457605669451,0.9792457605669451,0.9873449759554543,0.9873449759554543,1.0],"xaxis":"x","y":[0.0,0.0012531328320802004,0.0012531328320802004,0.007518796992481203,0.007518796992481203,0.03383458646616541,0.03383458646616541,0.043859649122807015,0.043859649122807015,0.05137844611528822,0.05137844611528822,0.05764411027568922,0.05764411027568922,0.06766917293233082,0.06766917293233082,0.07142857142857142,0.07142857142857142,0.08145363408521303,0.08145363408521303,0.08771929824561403,0.08771929824561403,0.09273182957393483,0.09273182957393483,0.09398496240601503,0.09398496240601503,0.09523809523809523,0.09523809523809523,0.10025062656641603,0.10025062656641603,0.10150375939849623,0.10150375939849623,0.11027568922305764,0.11027568922305764,0.11152882205513784,0.11152882205513784,0.12030075187969924,0.12030075187969924,0.12280701754385964,0.12280701754385964,0.12907268170426064,0.12907268170426064,0.13032581453634084,0.13032581453634084,0.13283208020050125,0.13283208020050125,0.13659147869674185,0.13659147869674185,0.13784461152882205,0.13784461152882205,0.14285714285714285,0.14285714285714285,0.14536340852130325,0.14536340852130325,0.14786967418546365,0.14786967418546365,0.15037593984962405,0.15037593984962405,0.15288220551378445,0.15288220551378445,0.16040100250626566,0.16040100250626566,0.16165413533834586,0.16165413533834586,0.16541353383458646,0.16541353383458646,0.16917293233082706,0.16917293233082706,0.17293233082706766,0.17293233082706766,0.17418546365914786,0.17418546365914786,0.17669172932330826,0.17669172932330826,0.18045112781954886,0.18045112781954886,0.18295739348370926,0.18295739348370926,0.18421052631578946,0.18421052631578946,0.18922305764411027,0.18922305764411027,0.19172932330827067,0.19172932330827067,0.19423558897243107,0.19423558897243107,0.19799498746867167,0.19799498746867167,0.20175438596491227,0.20175438596491227,0.20300751879699247,0.20300751879699247,0.20551378446115287,0.20551378446115287,0.21428571428571427,0.21428571428571427,0.21553884711779447,0.21553884711779447,0.22305764411027568,0.22305764411027568,0.22556390977443608,0.22556390977443608,0.22681704260651628,0.22681704260651628,0.23182957393483708,0.23182957393483708,0.23308270676691728,0.23308270676691728,0.23433583959899748,0.23433583959899748,0.23809523809523808,0.23809523809523808,0.24561403508771928,0.24561403508771928,0.24686716791979949,0.24686716791979949,0.2518796992481203,0.2518796992481203,0.2581453634085213,0.2581453634085213,0.2619047619047619,0.2619047619047619,0.2644110275689223,0.2644110275689223,0.2656641604010025,0.2656641604010025,0.2669172932330827,0.2669172932330827,0.2694235588972431,0.2694235588972431,0.2731829573934837,0.2731829573934837,0.2744360902255639,0.2744360902255639,0.2756892230576441,0.2756892230576441,0.2781954887218045,0.2781954887218045,0.2832080200501253,0.2832080200501253,0.2882205513784461,0.2882205513784461,0.29197994987468673,0.29197994987468673,0.2932330827067669,0.2932330827067669,0.29699248120300753,0.29699248120300753,0.30451127819548873,0.30451127819548873,0.3157894736842105,0.3157894736842105,0.31704260651629074,0.31704260651629074,0.31954887218045114,0.31954887218045114,0.3208020050125313,0.3208020050125313,0.32706766917293234,0.32706766917293234,0.32957393483709274,0.32957393483709274,0.3333333333333333,0.3333333333333333,0.3383458646616541,0.3383458646616541,0.33959899749373434,0.33959899749373434,0.34210526315789475,0.34210526315789475,0.34461152882205515,0.34461152882205515,0.3583959899749373,0.3583959899749373,0.35964912280701755,0.35964912280701755,0.3684210526315789,0.3684210526315789,0.36967418546365916,0.36967418546365916,0.37092731829573933,0.37092731829573933,0.37218045112781956,0.37218045112781956,0.37343358395989973,0.37343358395989973,0.37844611528822053,0.37844611528822053,0.38471177944862156,0.38471177944862156,0.38721804511278196,0.38721804511278196,0.39097744360902253,0.39097744360902253,0.39598997493734334,0.39598997493734334,0.39724310776942356,0.39724310776942356,0.39974937343358397,0.39974937343358397,0.40100250626566414,0.40100250626566414,0.40225563909774437,0.40225563909774437,0.40350877192982454,0.40350877192982454,0.40476190476190477,0.40476190476190477,0.40601503759398494,0.40601503759398494,0.40726817042606517,0.40726817042606517,0.40852130325814534,0.40852130325814534,0.41604010025062654,0.41604010025062654,0.42105263157894735,0.42105263157894735,0.4223057644110276,0.4223057644110276,0.42606516290726815,0.42606516290726815,0.43107769423558895,0.43107769423558895,0.4348370927318296,0.4348370927318296,0.43609022556390975,0.43609022556390975,0.43734335839599,0.43734335839599,0.43859649122807015,0.43859649122807015,0.4398496240601504,0.4398496240601504,0.44110275689223055,0.44110275689223055,0.4423558897243108,0.4423558897243108,0.44360902255639095,0.44360902255639095,0.44862155388471175,0.44862155388471175,0.45112781954887216,0.45112781954887216,0.4523809523809524,0.4523809523809524,0.45864661654135336,0.45864661654135336,0.46115288220551376,0.46115288220551376,0.462406015037594,0.462406015037594,0.46365914786967416,0.46365914786967416,0.4649122807017544,0.4649122807017544,0.4674185463659148,0.4674185463659148,0.47117794486215536,0.47117794486215536,0.4724310776942356,0.4724310776942356,0.47619047619047616,0.47619047619047616,0.4774436090225564,0.4774436090225564,0.4799498746867168,0.4799498746867168,0.48120300751879697,0.48120300751879697,0.4824561403508772,0.4824561403508772,0.48370927318295737,0.48370927318295737,0.4849624060150376,0.4849624060150376,0.48621553884711777,0.48621553884711777,0.487468671679198,0.487468671679198,0.48872180451127817,0.48872180451127817,0.4899749373433584,0.4899749373433584,0.49122807017543857,0.49122807017543857,0.49373433583959897,0.49373433583959897,0.4949874686716792,0.4949874686716792,0.49624060150375937,0.49624060150375937,0.4974937343358396,0.4974937343358396,0.49874686716791977,0.49874686716791977,0.5,0.5,0.5012531328320802,0.5012531328320802,0.5025062656641605,0.5025062656641605,0.5037593984962406,0.5037593984962406,0.506265664160401,0.506265664160401,0.5075187969924813,0.5075187969924813,0.5087719298245614,0.5087719298245614,0.5100250626566416,0.5100250626566416,0.5150375939849624,0.5150375939849624,0.5162907268170426,0.5162907268170426,0.518796992481203,0.518796992481203,0.5213032581453634,0.5213032581453634,0.5225563909774437,0.5225563909774437,0.5275689223057645,0.5275689223057645,0.5300751879699248,0.5300751879699248,0.5325814536340853,0.5325814536340853,0.5338345864661654,0.5338345864661654,0.5350877192982456,0.5350877192982456,0.5375939849624061,0.5375939849624061,0.5401002506265664,0.5401002506265664,0.5413533834586466,0.5413533834586466,0.5426065162907269,0.5426065162907269,0.5451127819548872,0.5451127819548872,0.5463659147869674,0.5463659147869674,0.5476190476190477,0.5476190476190477,0.5488721804511278,0.5488721804511278,0.550125313283208,0.550125313283208,0.5538847117794486,0.5538847117794486,0.556390977443609,0.556390977443609,0.5576441102756893,0.5576441102756893,0.5588972431077694,0.5588972431077694,0.5601503759398496,0.5601503759398496,0.5614035087719298,0.5614035087719298,0.5626566416040101,0.5626566416040101,0.5639097744360902,0.5639097744360902,0.568922305764411,0.568922305764411,0.5726817042606517,0.5726817042606517,0.5739348370927319,0.5739348370927319,0.5764411027568922,0.5764411027568922,0.5776942355889725,0.5776942355889725,0.5789473684210527,0.5789473684210527,0.5802005012531328,0.5802005012531328,0.581453634085213,0.581453634085213,0.5827067669172933,0.5827067669172933,0.5852130325814536,0.5852130325814536,0.5864661654135338,0.5864661654135338,0.5889724310776943,0.5889724310776943,0.5902255639097744,0.5902255639097744,0.5927318295739349,0.5927318295739349,0.5939849624060151,0.5939849624060151,0.5964912280701754,0.5964912280701754,0.5977443609022557,0.5977443609022557,0.5989974937343359,0.5989974937343359,0.600250626566416,0.600250626566416,0.6015037593984962,0.6015037593984962,0.6027568922305765,0.6027568922305765,0.6040100250626567,0.6040100250626567,0.6052631578947368,0.6052631578947368,0.606516290726817,0.606516290726817,0.6077694235588973,0.6077694235588973,0.6115288220551378,0.6115288220551378,0.6127819548872181,0.6127819548872181,0.6140350877192983,0.6140350877192983,0.6152882205513784,0.6152882205513784,0.6190476190476191,0.6190476190476191,0.6203007518796992,0.6203007518796992,0.6215538847117794,0.6215538847117794,0.6240601503759399,0.6240601503759399,0.62531328320802,0.62531328320802,0.6265664160401002,0.6265664160401002,0.6290726817042607,0.6290726817042607,0.6303258145363408,0.6303258145363408,0.6340852130325815,0.6340852130325815,0.6365914786967418,0.6365914786967418,0.6378446115288221,0.6378446115288221,0.6390977443609023,0.6390977443609023,0.6416040100250626,0.6416040100250626,0.6428571428571429,0.6428571428571429,0.6441102756892231,0.6441102756892231,0.6453634085213033,0.6453634085213033,0.6466165413533834,0.6466165413533834,0.6478696741854637,0.6478696741854637,0.650375939849624,0.650375939849624,0.6516290726817042,0.6516290726817042,0.6528822055137845,0.6528822055137845,0.6541353383458647,0.6541353383458647,0.656641604010025,0.656641604010025,0.6578947368421053,0.6578947368421053,0.6591478696741855,0.6591478696741855,0.6604010025062657,0.6604010025062657,0.6616541353383458,0.6616541353383458,0.6629072681704261,0.6629072681704261,0.6654135338345865,0.6654135338345865,0.6666666666666666,0.6666666666666666,0.6691729323308271,0.6691729323308271,0.6704260651629073,0.6704260651629073,0.6716791979949874,0.6716791979949874,0.6729323308270677,0.6729323308270677,0.6741854636591479,0.6741854636591479,0.6754385964912281,0.6754385964912281,0.6766917293233082,0.6766917293233082,0.6779448621553885,0.6779448621553885,0.6791979949874687,0.6791979949874687,0.6804511278195489,0.6804511278195489,0.681704260651629,0.681704260651629,0.6854636591478697,0.6854636591478697,0.6867167919799498,0.6867167919799498,0.6879699248120301,0.6879699248120301,0.6929824561403509,0.6929824561403509,0.6942355889724311,0.6942355889724311,0.6954887218045113,0.6954887218045113,0.6967418546365914,0.6967418546365914,0.6979949874686717,0.6979949874686717,0.7005012531328321,0.7005012531328321,0.7017543859649122,0.7017543859649122,0.7030075187969925,0.7030075187969925,0.7042606516290727,0.7042606516290727,0.7055137844611529,0.7055137844611529,0.706766917293233,0.706766917293233,0.7080200501253133,0.7080200501253133,0.7117794486215538,0.7117794486215538,0.7130325814536341,0.7130325814536341,0.7167919799498746,0.7167919799498746,0.7180451127819549,0.7180451127819549,0.7192982456140351,0.7192982456140351,0.7218045112781954,0.7218045112781954,0.7230576441102757,0.7230576441102757,0.7243107769423559,0.7243107769423559,0.7255639097744361,0.7255639097744361,0.7280701754385965,0.7280701754385965,0.7293233082706767,0.7293233082706767,0.7305764411027569,0.7305764411027569,0.7330827067669173,0.7330827067669173,0.7355889724310777,0.7355889724310777,0.7368421052631579,0.7368421052631579,0.7380952380952381,0.7380952380952381,0.7393483709273183,0.7393483709273183,0.7406015037593985,0.7406015037593985,0.7418546365914787,0.7418546365914787,0.7431077694235589,0.7431077694235589,0.7443609022556391,0.7443609022556391,0.7456140350877193,0.7456140350877193,0.7481203007518797,0.7481203007518797,0.7506265664160401,0.7506265664160401,0.7518796992481203,0.7518796992481203,0.7531328320802005,0.7531328320802005,0.7543859649122807,0.7543859649122807,0.7568922305764411,0.7568922305764411,0.7581453634085213,0.7581453634085213,0.7593984962406015,0.7593984962406015,0.7606516290726817,0.7606516290726817,0.7619047619047619,0.7619047619047619,0.7631578947368421,0.7631578947368421,0.7644110275689223,0.7644110275689223,0.7669172932330827,0.7669172932330827,0.768170426065163,0.768170426065163,0.7694235588972431,0.7694235588972431,0.7706766917293233,0.7706766917293233,0.7719298245614035,0.7719298245614035,0.7731829573934837,0.7731829573934837,0.7744360902255639,0.7744360902255639,0.7769423558897243,0.7769423558897243,0.7781954887218046,0.7781954887218046,0.7794486215538847,0.7794486215538847,0.7807017543859649,0.7807017543859649,0.7819548872180451,0.7819548872180451,0.7832080200501254,0.7832080200501254,0.7844611528822055,0.7844611528822055,0.7857142857142857,0.7857142857142857,0.7869674185463659,0.7869674185463659,0.7894736842105263,0.7894736842105263,0.7919799498746867,0.7919799498746867,0.793233082706767,0.793233082706767,0.7957393483709273,0.7957393483709273,0.7957393483709273,0.7957393483709273,0.7969924812030075,0.7969924812030075,0.7994987468671679,0.7994987468671679,0.8032581453634086,0.8032581453634086,0.8045112781954887,0.8045112781954887,0.8057644110275689,0.8057644110275689,0.8070175438596491,0.8070175438596491,0.8082706766917294,0.8082706766917294,0.8095238095238095,0.8095238095238095,0.8107769423558897,0.8107769423558897,0.8120300751879699,0.8120300751879699,0.8132832080200502,0.8132832080200502,0.8145363408521303,0.8145363408521303,0.8157894736842105,0.8157894736842105,0.8170426065162907,0.8170426065162907,0.818295739348371,0.818295739348371,0.8195488721804511,0.8195488721804511,0.8208020050125313,0.8208020050125313,0.8220551378446115,0.8220551378446115,0.8233082706766918,0.8233082706766918,0.8245614035087719,0.8245614035087719,0.8270676691729323,0.8270676691729323,0.8283208020050126,0.8283208020050126,0.8295739348370927,0.8295739348370927,0.8308270676691729,0.8308270676691729,0.8320802005012531,0.8320802005012531,0.8333333333333334,0.8333333333333334,0.8345864661654135,0.8345864661654135,0.8358395989974937,0.8358395989974937,0.8370927318295739,0.8370927318295739,0.8383458646616542,0.8383458646616542,0.8395989974937343,0.8395989974937343,0.8408521303258145,0.8408521303258145,0.843358395989975,0.843358395989975,0.8446115288220551,0.8446115288220551,0.8458646616541353,0.8458646616541353,0.8471177944862155,0.8471177944862155,0.8483709273182958,0.8483709273182958,0.849624060150376,0.849624060150376,0.8508771929824561,0.8508771929824561,0.8521303258145363,0.8521303258145363,0.8521303258145363,0.8521303258145363,0.8533834586466166,0.8533834586466166,0.8546365914786967,0.8546365914786967,0.8558897243107769,0.8558897243107769,0.8571428571428571,0.8571428571428571,0.8583959899749374,0.8583959899749374,0.8596491228070176,0.8596491228070176,0.8609022556390977,0.8609022556390977,0.8634085213032582,0.8634085213032582,0.8646616541353384,0.8646616541353384,0.8659147869674185,0.8659147869674185,0.8671679197994987,0.8671679197994987,0.868421052631579,0.868421052631579,0.8709273182957393,0.8709273182957393,0.8709273182957393,0.8709273182957393,0.8721804511278195,0.8721804511278195,0.8734335839598998,0.8734335839598998,0.87468671679198,0.87468671679198,0.8759398496240601,0.8759398496240601,0.8771929824561403,0.8771929824561403,0.8784461152882206,0.8784461152882206,0.8809523809523809,0.8809523809523809,0.8822055137844611,0.8822055137844611,0.8834586466165414,0.8834586466165414,0.8847117794486216,0.8847117794486216,0.8859649122807017,0.8859649122807017,0.8872180451127819,0.8872180451127819,0.8884711779448622,0.8884711779448622,0.8909774436090225,0.8909774436090225,0.8922305764411027,0.8922305764411027,0.893483709273183,0.893483709273183,0.8947368421052632,0.8947368421052632,0.8959899749373433,0.8959899749373433,0.8972431077694235,0.8972431077694235,0.8984962406015038,0.8984962406015038,0.9010025062656641,0.9010025062656641,0.9022556390977443,0.9022556390977443,0.9035087719298246,0.9035087719298246,0.9047619047619048,0.9047619047619048,0.9060150375939849,0.9060150375939849,0.9072681704260651,0.9072681704260651,0.9072681704260651,0.9072681704260651,0.9085213032581454,0.9085213032581454,0.9097744360902256,0.9097744360902256,0.9110275689223057,0.9110275689223057,0.9122807017543859,0.9122807017543859,0.9135338345864662,0.9135338345864662,0.9147869674185464,0.9147869674185464,0.9160401002506265,0.9160401002506265,0.9172932330827067,0.9172932330827067,0.918546365914787,0.918546365914787,0.918546365914787,0.918546365914787,0.918546365914787,0.918546365914787,0.918546365914787,0.918546365914787,0.9197994987468672,0.9197994987468672,0.9223057644110275,0.9223057644110275,0.9235588972431078,0.9235588972431078,0.924812030075188,0.924812030075188,0.9260651629072681,0.9260651629072681,0.9260651629072681,0.9273182957393483,0.9273182957393483,0.9285714285714286,0.9285714285714286,0.9298245614035088,0.9298245614035088,0.9298245614035088,0.9298245614035088,0.9298245614035088,0.9298245614035088,0.931077694235589,0.931077694235589,0.9323308270676691,0.9323308270676691,0.9335839598997494,0.9335839598997494,0.9360902255639098,0.9360902255639098,0.9373433583959899,0.9373433583959899,0.9385964912280702,0.9385964912280702,0.9398496240601504,0.9398496240601504,0.9398496240601504,0.9398496240601504,0.9411027568922306,0.9411027568922306,0.9411027568922306,0.9411027568922306,0.9411027568922306,0.9411027568922306,0.9411027568922306,0.9411027568922306,0.9411027568922306,0.9411027568922306,0.9423558897243107,0.9423558897243107,0.943609022556391,0.943609022556391,0.9448621553884712,0.9448621553884712,0.9448621553884712,0.9448621553884712,0.9461152882205514,0.9461152882205514,0.9473684210526315,0.9473684210526315,0.9473684210526315,0.9473684210526315,0.9486215538847118,0.9486215538847118,0.949874686716792,0.949874686716792,0.9511278195488722,0.9511278195488722,0.9523809523809523,0.9523809523809523,0.9536340852130326,0.9536340852130326,0.9548872180451128,0.9548872180451128,0.9548872180451128,0.9548872180451128,0.956140350877193,0.956140350877193,0.9573934837092731,0.9573934837092731,0.9586466165413534,0.9586466165413534,0.9586466165413534,0.9586466165413534,0.9598997493734336,0.9598997493734336,0.9598997493734336,0.9598997493734336,0.9611528822055138,0.9611528822055138,0.9624060150375939,0.9624060150375939,0.9636591478696742,0.9636591478696742,0.9649122807017544,0.9649122807017544,0.9661654135338346,0.9661654135338346,0.9661654135338346,0.9661654135338346,0.9674185463659147,0.9674185463659147,0.9674185463659147,0.9674185463659147,0.968671679197995,0.968671679197995,0.968671679197995,0.968671679197995,0.9699248120300752,0.9699248120300752,0.9699248120300752,0.9699248120300752,0.9711779448621554,0.9711779448621554,0.9711779448621554,0.9711779448621554,0.9724310776942355,0.9724310776942355,0.9724310776942355,0.9724310776942355,0.9724310776942355,0.9724310776942355,0.9736842105263158,0.9736842105263158,0.9736842105263158,0.9736842105263158,0.9736842105263158,0.9736842105263158,0.9736842105263158,0.9736842105263158,0.974937343358396,0.974937343358396,0.9761904761904762,0.9761904761904762,0.9761904761904762,0.9761904761904762,0.9761904761904762,0.9761904761904762,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9774436090225563,0.9786967418546366,0.9786967418546366,0.9799498746867168,0.9799498746867168,0.9799498746867168,0.9799498746867168,0.9799498746867168,0.9799498746867168,0.981203007518797,0.981203007518797,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9824561403508771,0.9837092731829574,0.9837092731829574,0.9837092731829574,0.9837092731829574,0.9862155388471178,0.9862155388471178,0.9862155388471178,0.9862155388471178,0.9862155388471178,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9874686716791979,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9887218045112782,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9899749373433584,0.9912280701754386,0.9912280701754386,0.9912280701754386,0.9912280701754386,0.9912280701754386,0.9912280701754386,0.9924812030075187,0.9924812030075187,0.9924812030075187,0.9924812030075187,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.993734335839599,0.9949874686716792,0.9949874686716792,0.9962406015037594,0.9962406015037594,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9974937343358395,0.9987468671679198,0.9987468671679198,1.0,1.0],"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"False Positive Rate"},"constrain":"domain"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"True Positive Rate"},"scaleanchor":"x","scaleratio":1},"legend":{"tracegroupgap":0},"title":{"text":"ROC curve ( Area = 0.85)"},"height":600,"width":600,"shapes":[{"line":{"color":"navy","dash":"dash","width":2},"type":"line","x0":0,"x1":1,"y0":0,"y1":1},{"fillcolor":"red","line":{"width":0},"opacity":0.1,"type":"rect","x0":0,"x1":0.5,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"fillcolor":"green","line":{"width":0},"opacity":0.1,"type":"rect","x0":0.5,"x1":1,"xref":"x","y0":0,"y1":1,"yref":"y domain"}]},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('f4c6e42b-d840-48c4-9d9b-23b7f44dad7b');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</section>
+<section id="confusion-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="confusion-matrix">CONFUSION MATRIX</h3>
+<div id="cell-20" class="cell" data-execution_count="255">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> Confusion_Matrix(model, X_test, y_true):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    probs <span class="op">=</span> model.predict_proba(X_test)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    accuracy, matrix, f1, fpr, tpr, roc_auc <span class="op">=</span> get_model_performance(X_test, y_true, y_pred, probs)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    plot_confusion_matrix(matrix)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>Confusion_Matrix(rf_orig_sex, dataset_orig_panel19_test.features, y_test_sex)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="metrics_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-21" class="cell" data-execution_count="192">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> patches</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display, Markdown</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_fair_metrics(fair_metrics):</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Enhanced style settings</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    sns.<span class="bu">set</span>(style<span class="op">=</span><span class="st">"whitegrid"</span>, palette<span class="op">=</span><span class="st">"muted"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data preparation</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> fair_metrics.columns.values</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    metrics_df <span class="op">=</span> fair_metrics.iloc[<span class="dv">1</span>:]  <span class="co"># Exclude the 'objective' row for plotting</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    objective_values <span class="op">=</span> fair_metrics.loc[<span class="st">'objective'</span>]</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot setup</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">5</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">5</span>), sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    colors <span class="op">=</span> sns.color_palette(<span class="st">"husl"</span>, n_colors<span class="op">=</span><span class="bu">len</span>(cols))</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot each metric in a subplot</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, col <span class="kw">in</span> <span class="bu">enumerate</span>(cols):</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>        sns.barplot(x<span class="op">=</span>metrics_df.index, y<span class="op">=</span>metrics_df[col], ax<span class="op">=</span>axs[i], palette<span class="op">=</span>[colors[i]])</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Add the objective line, ensuring it spans the full width of the plot</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        xlim <span class="op">=</span> axs[i].get_xlim()</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>        axs[i].plot(xlim, [objective_values[col]] <span class="op">*</span> <span class="dv">2</span>, <span class="st">'r--'</span>, label<span class="op">=</span><span class="st">'Objective'</span>)  <span class="co"># Adjusted to use plot for full width</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>        axs[i].set_xlim(xlim)  <span class="co"># Reset the xlim to ensure the plot is not altered by line plotting</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Add shaded area for bounds</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>        bound <span class="op">=</span> [<span class="op">-</span><span class="fl">0.1</span>, <span class="fl">0.1</span>] <span class="cf">if</span> i <span class="op">&lt;</span> <span class="dv">3</span> <span class="cf">else</span> [<span class="fl">0.8</span>, <span class="fl">1.2</span>] <span class="cf">if</span> i <span class="op">==</span> <span class="dv">3</span> <span class="cf">else</span> [<span class="dv">0</span>, <span class="fl">0.25</span>]</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>        axs[i].add_patch(patches.Rectangle((xlim[<span class="dv">0</span>], bound[<span class="dv">0</span>]), xlim[<span class="dv">1</span>] <span class="op">-</span> xlim[<span class="dv">0</span>], bound[<span class="dv">1</span>] <span class="op">-</span> bound[<span class="dv">0</span>], color<span class="op">=</span><span class="st">'GREEN'</span>, alpha<span class="op">=</span><span class="fl">0.2</span>))</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set titles and labels</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>        axs[i].set_title(col.replace(<span class="st">'_'</span>, <span class="st">' '</span>).title(), fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>        axs[i].set_xlabel(<span class="st">''</span>)</span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>        axs[i].set_ylabel(<span class="st">'Metric Value'</span> <span class="cf">if</span> i <span class="op">==</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">''</span>)</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># General layout adjustments</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>    plt.suptitle(<span class="st">'Fairness Metrics Overview'</span>, fontsize<span class="op">=</span><span class="dv">24</span>, y<span class="op">=</span><span class="fl">1.05</span>)</span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Display the plot</span></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-22" class="cell" data-execution_count="194">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.metrics <span class="im">import</span> ClassificationMetric, BinaryLabelDatasetMetric</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fair_metrics():</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    dataset <span class="op">=</span> dataset_orig_panel19_test</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    pred <span class="op">=</span> rf_orig_sex.predict(dataset.features)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    dataset_pred <span class="op">=</span> dataset.copy()</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    dataset_pred.labels <span class="op">=</span> pred</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> [<span class="st">'statistical_parity_difference'</span>, <span class="st">'equal_opportunity_difference'</span>, <span class="st">'average_abs_odds_difference'</span>, <span class="st">'disparate_impact'</span>, <span class="st">'theil_index'</span>]</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    obj_fairness <span class="op">=</span> [[<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>]]</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize DataFrame with objective row ---- Adjusted to initialize correctly</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    fair_metrics <span class="op">=</span> pd.DataFrame(data<span class="op">=</span>obj_fairness, columns<span class="op">=</span>cols, index<span class="op">=</span>[<span class="st">'objective'</span>])</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    rows_list <span class="op">=</span> []  <span class="co"># Collect rows in a list for efficiency ---- Added for better performance</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> attr <span class="kw">in</span> dataset_pred.protected_attribute_names:</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>        idx <span class="op">=</span> dataset_pred.protected_attribute_names.index(attr)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>        privileged_groups <span class="op">=</span> [{attr: dataset_pred.privileged_protected_attributes[idx][<span class="dv">0</span>]}]</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>        unprivileged_groups <span class="op">=</span> [{attr: dataset_pred.unprivileged_protected_attributes[idx][<span class="dv">0</span>]}]</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>        classified_metric <span class="op">=</span> ClassificationMetric(dataset, dataset_pred, unprivileged_groups<span class="op">=</span>unprivileged_groups, privileged_groups<span class="op">=</span>privileged_groups)</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>        metric_pred <span class="op">=</span> BinaryLabelDatasetMetric(dataset_pred, unprivileged_groups<span class="op">=</span>unprivileged_groups, privileged_groups<span class="op">=</span>privileged_groups)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a dictionary for the row ---- Simplified row creation</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>        row_dict <span class="op">=</span> {</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">'statistical_parity_difference'</span>: metric_pred.mean_difference(),</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">'equal_opportunity_difference'</span>: classified_metric.equal_opportunity_difference(),</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">'average_abs_odds_difference'</span>: classified_metric.average_abs_odds_difference(),</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">'disparate_impact'</span>: metric_pred.disparate_impact(),</span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">'theil_index'</span>: classified_metric.theil_index()</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>        rows_list.append(row_dict)  <span class="co"># Append dictionary to list ---- Efficient collection of rows</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert list of dicts to DataFrame and concatenate with the objective row ---- Proper use of pd.concat</span></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> rows_list:</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>        new_rows_df <span class="op">=</span> pd.DataFrame(rows_list, index<span class="op">=</span>dataset_pred.protected_attribute_names)</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>        fair_metrics <span class="op">=</span> pd.concat([fair_metrics, new_rows_df])</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>    fair_metrics <span class="op">=</span> fair_metrics.replace([<span class="op">-</span>np.inf, np.inf], <span class="dv">2</span>)  <span class="co"># Handle infinite values</span></span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'fair_metrics'</span>)</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(fair_metrics)</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">type</span>(fair_metrics))</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fair_metrics</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>fair <span class="op">=</span> fair_metrics()</span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming plot_fair_metrics function exists and is correct ---- No changes made here</span></span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a>plot_fair_metrics(fair)</span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>display(fair)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>fair_metrics
+           statistical_parity_difference  equal_opportunity_difference  \
+objective                       0.000000                      0.000000   
+RACE                           -0.115925                     -0.181738   
+
+           average_abs_odds_difference  disparate_impact  theil_index  
+objective                     0.000000          1.000000     0.000000  
+RACE                          0.110251          0.352207     0.115688  
+&lt;class 'pandas.core.frame.DataFrame'&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="metrics_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">statistical_parity_difference</th>
+<th data-quarto-table-cell-role="th">equal_opportunity_difference</th>
+<th data-quarto-table-cell-role="th">average_abs_odds_difference</th>
+<th data-quarto-table-cell-role="th">disparate_impact</th>
+<th data-quarto-table-cell-role="th">theil_index</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">objective</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>1.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">RACE</td>
+<td>-0.115925</td>
+<td>-0.181738</td>
+<td>0.110251</td>
+<td>0.352207</td>
+<td>0.115688</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="preethi-_-until-this" class="level3">
+<h3 class="anchored" data-anchor-id="preethi-_-until-this">PREETHI _ UNTIL THIS</h3>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/srinivassundar98\.github\.io\/Ensuring-Fair-Play\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Discrimination Loss Fn</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d4be639c637f3db3c684c66cefad7e0c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Discrimination Loss Fn</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="cell-1" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timedelta</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sys.path.insert(<span class="dv">0</span>, <span class="st">'../'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Datasets</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.datasets <span class="im">import</span> MEPSDataset19</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Fairness metrics</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.metrics <span class="im">import</span> BinaryLabelDatasetMetric</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Explainers</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aif360.explainers <span class="im">import</span> MetricTextExplainer</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Scalers</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\srinivas\anaconda3\Lib\site-packages\torch\_functorch\deprecated.py:61: UserWarning: We've integrated functorch into PyTorch. As the final step of the integration, functorch.vmap is deprecated as of PyTorch 2.0 and will be deleted in a future version of PyTorch &gt;= 2.3. Please use torch.vmap instead; see the PyTorch 2.0 release notes and/or the torch.func migration guide for more details https://pytorch.org/docs/master/func.migrating.html
+  warn_deprecated('vmap', 'torch.vmap')</code></pre>
+</div>
+</div>
+<div id="cell-2" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dataset_orig_panel19_train <span class="op">=</span> MEPSDataset19()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-3" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sens_ind <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sens_attr <span class="op">=</span> dataset_orig_panel19_train.protected_attribute_names[sens_ind]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>unprivileged_groups <span class="op">=</span> [{sens_attr: v} <span class="cf">for</span> v <span class="kw">in</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                    dataset_orig_panel19_train.unprivileged_protected_attributes[sens_ind]]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>privileged_groups <span class="op">=</span> [{sens_attr: v} <span class="cf">for</span> v <span class="kw">in</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                    dataset_orig_panel19_train.privileged_protected_attributes[sens_ind]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-4" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dataset_orig_panel19_train.feature_names[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>'RACE'</code></pre>
+</div>
+</div>
+<div id="cell-5" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dataset_orig_panel19_train.features</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> dataset_orig_panel19_train.labels.ravel()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Split data</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Scale features</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>X_train_scaled <span class="op">=</span> X_train</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>X_test_scaled <span class="op">=</span> X_test</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Train logistic regression model</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> LogisticRegression(random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>model.fit(X_train_scaled, y_train)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict probabilities on the same scaled training data</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>train_probabilities <span class="op">=</span> model.predict_proba(X_train_scaled)[:, <span class="dv">1</span>]</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculation of discrimination index without modifying dataset structure</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>sens_attr_index <span class="op">=</span> dataset_orig_panel19_train.feature_names.index(<span class="st">'RACE'</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Define unprivileged and privileged values</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>unprivileged_val <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>privileged_val <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\srinivas\anaconda3\Lib\site-packages\sklearn\linear_model\_logistic.py:469: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(</code></pre>
+</div>
+</div>
+<div id="cell-8" class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.optim <span class="im">as</span> optim</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BinaryClassifier(nn.Module):</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, input_size):</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>(BinaryClassifier, <span class="va">self</span>).<span class="fu">__init__</span>()</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc1 <span class="op">=</span> nn.Linear(input_size, <span class="dv">64</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc2 <span class="op">=</span> nn.Linear(<span class="dv">64</span>, <span class="dv">1</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.relu(<span class="va">self</span>.fc1(x))</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.sigmoid(<span class="va">self</span>.fc2(x))</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x.squeeze()</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom loss function</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> discrimination_loss(output, target, sensitive_features, lambda_val<span class="op">=</span><span class="dv">100</span>, k<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    criterion <span class="op">=</span> nn.BCELoss()</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    standard_loss <span class="op">=</span> criterion(output, target)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    mask_unpriv <span class="op">=</span> (sensitive_features <span class="op">==</span> <span class="dv">0</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    mask_priv <span class="op">=</span> (sensitive_features <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">#discrimination=torch.abs(prob_priv)</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    prob_unpriv <span class="op">=</span> torch.mean(output[mask_unpriv])</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    prob_priv <span class="op">=</span> torch.mean(output[mask_priv])</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    discrimination <span class="op">=</span> lambda_val <span class="op">*</span> (prob_priv <span class="op">-</span> prob_unpriv) <span class="op">**</span> k</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    loss_val<span class="op">=</span>(<span class="dv">1</span> <span class="op">+</span> lambda_val <span class="op">*</span> discrimination) <span class="op">*</span> standard_loss</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss_val,discrimination.item() </span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_accuracy(predictions, targets):</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    predicted_classes <span class="op">=</span> (predictions <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">float</span>()</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (predicted_classes <span class="op">==</span> targets).<span class="bu">float</span>().mean()</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> torch.tensor(X_train_scaled).<span class="bu">float</span>()</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>targets <span class="op">=</span> torch.tensor(y_train).<span class="bu">float</span>().unsqueeze(<span class="dv">1</span>)</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Correctly preparing the sensitive features</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> <span class="fl">0.5</span>  <span class="co"># Adjust the threshold according to your specific case</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>sensitive_features <span class="op">=</span> torch.tensor((data[:, <span class="dv">1</span>].numpy() <span class="op">&gt;</span> threshold).astype(<span class="bu">float</span>)).<span class="bu">float</span>()</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> torch.cat((data[:, :<span class="dv">1</span>], data[:, <span class="dv">2</span>:]), dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming similar preparation for test data</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> torch.tensor(X_test_scaled).<span class="bu">float</span>()</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>test_targets <span class="op">=</span> torch.tensor(y_test).<span class="bu">float</span>().unsqueeze(<span class="dv">1</span>)</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>test_sensitive_features <span class="op">=</span> torch.tensor((test_data[:, <span class="dv">1</span>].numpy() <span class="op">&gt;</span> threshold).astype(<span class="bu">float</span>)).<span class="bu">float</span>()</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>test_features <span class="op">=</span> torch.cat((test_data[:, :<span class="dv">1</span>], test_data[:, <span class="dv">2</span>:]), dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>model2 <span class="op">=</span> BinaryClassifier(features.shape[<span class="dv">1</span>])</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optim.Adam(model2.parameters(), lr<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>train_losses, train_accuracies, train_discriminations,train_fairness <span class="op">=</span> [], [], [],[]</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>test_losses, test_accuracies, test_discriminations,test_fairness <span class="op">=</span> [], [], [],[]</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Training loop</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>model2.train()</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>    optimizer.zero_grad()</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> model2(features)</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>    loss, discrimination <span class="op">=</span> discrimination_loss(outputs, targets.squeeze(), sensitive_features)</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>    train_accuracy <span class="op">=</span> calculate_accuracy(outputs, targets.squeeze())</span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>    loss.backward()</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    optimizer.step()</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Evaluation on test data</span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>    model2.<span class="bu">eval</span>()</span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>        test_outputs <span class="op">=</span> model2(test_features)</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>        test_loss,test_discrimination <span class="op">=</span> discrimination_loss(test_outputs, test_targets.squeeze(), test_sensitive_features)</span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>        test_accuracy <span class="op">=</span> calculate_accuracy(test_outputs, test_targets.squeeze())</span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Epoch </span><span class="sc">{</span>epoch<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">, Train Loss: </span><span class="sc">{</span>loss<span class="sc">.</span>item()<span class="sc">}</span><span class="ss">, Train Acc: </span><span class="sc">{</span>train_accuracy<span class="sc">.</span>item()<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%, Train Discrimination: </span><span class="sc">{</span>discrimination<span class="sc">}</span><span class="ss"> '</span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f'Test Loss: </span><span class="sc">{</span>test_loss<span class="sc">.</span>item()<span class="sc">}</span><span class="ss">, Test Acc: </span><span class="sc">{</span>test_accuracy<span class="sc">.</span>item()<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%,Test Discrimination: </span><span class="sc">{</span>test_discrimination<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>    train_losses.append(loss.item())</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>    train_accuracies.append(train_accuracy.item() <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>    train_discriminations.append(discrimination)</span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>    fairness<span class="op">=</span><span class="dv">1</span><span class="op">-</span>discrimination</span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>    train_fairness.append(fairness)</span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>    test_fairness.append(fairness)</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    test_losses.append(test_loss.item())</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>    test_accuracies.append(test_accuracy.item() <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>    test_discriminations.append(test_discrimination)</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>    model2.train()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1, Train Loss: 2.673090934753418, Train Acc: 39.25%, Train Discrimination: 0.022887492552399635 Test Loss: 61.42726135253906, Test Acc: 58.78%,Test Discrimination: 0.7591049075126648
+Epoch 2, Train Loss: 38.965476989746094, Train Acc: 58.88%, Train Discrimination: 0.483476847410202 Test Loss: 33.263851165771484, Test Acc: 81.62%,Test Discrimination: 0.3896600008010864
+Epoch 3, Train Loss: 20.107635498046875, Train Acc: 82.00%, Train Discrimination: 0.23562787473201752 Test Loss: 15.587469100952148, Test Acc: 82.66%,Test Discrimination: 0.17575567960739136
+Epoch 4, Train Loss: 9.372156143188477, Train Acc: 82.87%, Train Discrimination: 0.10379645973443985 Test Loss: 7.601461887359619, Test Acc: 82.66%,Test Discrimination: 0.07924606651067734
+Epoch 5, Train Loss: 4.696783542633057, Train Acc: 82.87%, Train Discrimination: 0.04625870659947395 Test Loss: 3.873684883117676, Test Acc: 82.66%,Test Discrimination: 0.034578826278448105
+Epoch 6, Train Loss: 2.5706000328063965, Train Acc: 82.87%, Train Discrimination: 0.02020670659840107 Test Loss: 2.108959913253784, Test Acc: 82.66%,Test Discrimination: 0.01374199241399765
+Epoch 7, Train Loss: 1.579584002494812, Train Acc: 82.87%, Train Discrimination: 0.008166934363543987 Test Loss: 1.367756724357605, Test Acc: 82.66%,Test Discrimination: 0.005068087484687567
+Epoch 8, Train Loss: 1.169830560684204, Train Acc: 82.87%, Train Discrimination: 0.0031696120277047157 Test Loss: 1.0890002250671387, Test Acc: 82.66%,Test Discrimination: 0.0017613265663385391
+Epoch 9, Train Loss: 1.017871379852295, Train Acc: 82.87%, Train Discrimination: 0.001234313822351396 Test Loss: 0.9949354529380798, Test Acc: 82.66%,Test Discrimination: 0.0005632542306557298
+Epoch 10, Train Loss: 0.9675214290618896, Train Acc: 82.87%, Train Discrimination: 0.0004987393622286618 Test Loss: 0.968485414981842, Test Acc: 82.66%,Test Discrimination: 0.0001494826574344188
+Epoch 11, Train Loss: 0.9534360766410828, Train Acc: 82.87%, Train Discrimination: 0.00021293242753017694 Test Loss: 0.9643883109092712, Test Acc: 82.66%,Test Discrimination: 2.184201730415225e-05
+Epoch 12, Train Loss: 0.9504719376564026, Train Acc: 82.87%, Train Discrimination: 9.624656377127394e-05 Test Loss: 0.9659908413887024, Test Acc: 82.66%,Test Discrimination: 3.8280805370050075e-07
+Epoch 13, Train Loss: 0.9492924213409424, Train Acc: 82.87%, Train Discrimination: 4.5405256969388574e-05 Test Loss: 0.9674115777015686, Test Acc: 82.66%,Test Discrimination: 2.1346231733332388e-05
+Epoch 14, Train Loss: 0.9465421438217163, Train Acc: 82.87%, Train Discrimination: 2.2052401618566364e-05 Test Loss: 0.9668164253234863, Test Acc: 82.66%,Test Discrimination: 6.389908958226442e-05
+Epoch 15, Train Loss: 0.9409127235412598, Train Acc: 82.87%, Train Discrimination: 1.068957590177888e-05 Test Loss: 0.9637989401817322, Test Acc: 82.66%,Test Discrimination: 0.00012362998677417636
+Epoch 16, Train Loss: 0.9319369792938232, Train Acc: 82.87%, Train Discrimination: 5.2250561566324905e-06 Test Loss: 0.9588673114776611, Test Acc: 82.66%,Test Discrimination: 0.00020664601470343769
+Epoch 17, Train Loss: 0.9193623065948486, Train Acc: 82.87%, Train Discrimination: 2.4458565803797683e-06 Test Loss: 0.9535431861877441, Test Acc: 82.66%,Test Discrimination: 0.00033388298470526934
+Epoch 18, Train Loss: 0.9028666615486145, Train Acc: 82.87%, Train Discrimination: 6.912121079949429e-07 Test Loss: 0.9499441981315613, Test Acc: 82.66%,Test Discrimination: 0.0005363122327253222
+Epoch 19, Train Loss: 0.8821762204170227, Train Acc: 82.87%, Train Discrimination: 1.3125004416636443e-09 Test Loss: 0.9531121253967285, Test Acc: 82.66%,Test Discrimination: 0.0008811535662971437
+Epoch 20, Train Loss: 0.8572307825088501, Train Acc: 82.87%, Train Discrimination: 1.345642090200272e-06 Test Loss: 0.973260223865509, Test Acc: 82.66%,Test Discrimination: 0.0015014660311862826
+Epoch 21, Train Loss: 0.8286730647087097, Train Acc: 82.87%, Train Discrimination: 7.08078732714057e-06 Test Loss: 1.0317484140396118, Test Acc: 82.66%,Test Discrimination: 0.002678176388144493
+Epoch 22, Train Loss: 0.7980899810791016, Train Acc: 82.87%, Train Discrimination: 2.1819911125930957e-05 Test Loss: 1.1767431497573853, Test Acc: 82.66%,Test Discrimination: 0.005080036818981171
+Epoch 23, Train Loss: 0.7685965299606323, Train Acc: 82.87%, Train Discrimination: 6.511683750431985e-05 Test Loss: 1.5102810859680176, Test Acc: 82.66%,Test Discrimination: 0.010152535513043404
+Epoch 24, Train Loss: 0.7478821277618408, Train Acc: 82.86%, Train Discrimination: 0.00019554585742298514 Test Loss: 2.153079032897949, Test Acc: 82.56%,Test Discrimination: 0.019485153257846832
+Epoch 25, Train Loss: 0.7506402134895325, Train Acc: 82.85%, Train Discrimination: 0.0004985617124475539 Test Loss: 2.7824699878692627, Test Acc: 80.54%,Test Discrimination: 0.0281366016715765
+Epoch 26, Train Loss: 0.7560930848121643, Train Acc: 80.69%, Train Discrimination: 0.0005774438031949103 Test Loss: 2.837212085723877, Test Acc: 78.68%,Test Discrimination: 0.028529640287160873
+Epoch 27, Train Loss: 0.7321838140487671, Train Acc: 78.70%, Train Discrimination: 0.00014320132322609425 Test Loss: 2.5272648334503174, Test Acc: 78.74%,Test Discrimination: 0.024176504462957382
+Epoch 28, Train Loss: 0.7269140481948853, Train Acc: 78.55%, Train Discrimination: 2.1906656911596656e-05 Test Loss: 2.2568483352661133, Test Acc: 79.79%,Test Discrimination: 0.02083236537873745
+Epoch 29, Train Loss: 0.7244833707809448, Train Acc: 79.85%, Train Discrimination: 8.998852717923e-05 Test Loss: 2.1351840496063232, Test Acc: 81.43%,Test Discrimination: 0.019712287932634354
+Epoch 30, Train Loss: 0.7057511210441589, Train Acc: 81.40%, Train Discrimination: 1.0529709470574744e-05 Test Loss: 2.1184818744659424, Test Acc: 82.34%,Test Discrimination: 0.020081672817468643
+Epoch 31, Train Loss: 0.697006106376648, Train Acc: 82.58%, Train Discrimination: 9.081877942662686e-05 Test Loss: 2.085883617401123, Test Acc: 82.66%,Test Discrimination: 0.02004893496632576
+Epoch 32, Train Loss: 0.7025237083435059, Train Acc: 82.86%, Train Discrimination: 0.0003208376292604953 Test Loss: 1.9577003717422485, Test Acc: 82.66%,Test Discrimination: 0.018389374017715454
+Epoch 33, Train Loss: 0.6999026536941528, Train Acc: 82.86%, Train Discrimination: 0.0003514807904139161 Test Loss: 1.792019248008728, Test Acc: 82.66%,Test Discrimination: 0.016021478921175003
+Epoch 34, Train Loss: 0.6904038786888123, Train Acc: 82.86%, Train Discrimination: 0.0002262700436403975 Test Loss: 1.646807074546814, Test Acc: 82.66%,Test Discrimination: 0.013883988372981548
+Epoch 35, Train Loss: 0.681954026222229, Train Acc: 82.86%, Train Discrimination: 8.955790690379217e-05 Test Loss: 1.5441527366638184, Test Acc: 82.66%,Test Discrimination: 0.012366348877549171
+Epoch 36, Train Loss: 0.6776283383369446, Train Acc: 82.86%, Train Discrimination: 1.2570098078867886e-05 Test Loss: 1.4808372259140015, Test Acc: 82.66%,Test Discrimination: 0.011473124846816063
+Epoch 37, Train Loss: 0.67612624168396, Train Acc: 82.86%, Train Discrimination: 7.96033361893933e-07 Test Loss: 1.4504456520080566, Test Acc: 82.66%,Test Discrimination: 0.011140910908579826
+Epoch 38, Train Loss: 0.6729456782341003, Train Acc: 82.86%, Train Discrimination: 4.136281404498732e-06 Test Loss: 1.4428966045379639, Test Acc: 82.66%,Test Discrimination: 0.011224158108234406
+Epoch 39, Train Loss: 0.6666244268417358, Train Acc: 82.86%, Train Discrimination: 2.770426021925232e-08 Test Loss: 1.454705834388733, Test Acc: 82.66%,Test Discrimination: 0.01165025308728218
+Epoch 40, Train Loss: 0.6600421071052551, Train Acc: 82.86%, Train Discrimination: 1.558014082547743e-05 Test Loss: 1.4815967082977295, Test Acc: 82.66%,Test Discrimination: 0.01232194621115923
+Epoch 41, Train Loss: 0.654700756072998, Train Acc: 82.86%, Train Discrimination: 5.453625271911733e-05 Test Loss: 1.5220767259597778, Test Acc: 82.69%,Test Discrimination: 0.013196742162108421
+Epoch 42, Train Loss: 0.6489155292510986, Train Acc: 82.86%, Train Discrimination: 7.614127389388159e-05 Test Loss: 1.5693572759628296, Test Acc: 82.69%,Test Discrimination: 0.014150256291031837
+Epoch 43, Train Loss: 0.6415050625801086, Train Acc: 82.86%, Train Discrimination: 5.184347173781134e-05 Test Loss: 1.61744225025177, Test Acc: 82.63%,Test Discrimination: 0.015085555613040924
+Epoch 44, Train Loss: 0.6343680024147034, Train Acc: 82.86%, Train Discrimination: 1.1204567272216082e-05 Test Loss: 1.6670290231704712, Test Acc: 82.60%,Test Discrimination: 0.01605314388871193
+Epoch 45, Train Loss: 0.6292930245399475, Train Acc: 82.75%, Train Discrimination: 4.155396027272218e-08 Test Loss: 1.7307188510894775, Test Acc: 82.44%,Test Discrimination: 0.017327889800071716
+Epoch 46, Train Loss: 0.6232834458351135, Train Acc: 82.66%, Train Discrimination: 3.589822483718308e-08 Test Loss: 1.7991687059402466, Test Acc: 82.28%,Test Discrimination: 0.018782418221235275
+Epoch 47, Train Loss: 0.6167179346084595, Train Acc: 82.61%, Train Discrimination: 2.0278188458178192e-05 Test Loss: 1.7985247373580933, Test Acc: 82.34%,Test Discrimination: 0.019137542694807053
+Epoch 48, Train Loss: 0.6112115383148193, Train Acc: 82.65%, Train Discrimination: 5.350239734980278e-05 Test Loss: 1.677141547203064, Test Acc: 82.53%,Test Discrimination: 0.017426714301109314
+Epoch 49, Train Loss: 0.6036722660064697, Train Acc: 82.79%, Train Discrimination: 1.9525708921719342e-05 Test Loss: 1.5230921506881714, Test Acc: 82.63%,Test Discrimination: 0.015103863552212715
+Epoch 50, Train Loss: 0.5979263782501221, Train Acc: 82.78%, Train Discrimination: 7.583054184578941e-08 Test Loss: 1.4365432262420654, Test Acc: 82.63%,Test Discrimination: 0.013927778229117393
+Epoch 51, Train Loss: 0.5918025374412537, Train Acc: 82.80%, Train Discrimination: 1.6969216858342406e-06 Test Loss: 1.415098786354065, Test Acc: 82.63%,Test Discrimination: 0.01388073991984129
+Epoch 52, Train Loss: 0.5860604047775269, Train Acc: 82.85%, Train Discrimination: 3.354820728418417e-05 Test Loss: 1.4109747409820557, Test Acc: 82.60%,Test Discrimination: 0.014095714315772057
+Epoch 53, Train Loss: 0.5798729658126831, Train Acc: 82.83%, Train Discrimination: 4.067596819368191e-05 Test Loss: 1.40736985206604, Test Acc: 82.72%,Test Discrimination: 0.014263376593589783
+Epoch 54, Train Loss: 0.5727940797805786, Train Acc: 82.83%, Train Discrimination: 2.2069218630349496e-06 Test Loss: 1.453865647315979, Test Acc: 82.82%,Test Discrimination: 0.01535029336810112
+Epoch 55, Train Loss: 0.5668334364891052, Train Acc: 82.82%, Train Discrimination: 1.5335253067405574e-07 Test Loss: 1.549080491065979, Test Acc: 82.75%,Test Discrimination: 0.017395274713635445
+Epoch 56, Train Loss: 0.5615146160125732, Train Acc: 82.69%, Train Discrimination: 3.865927646984346e-05 Test Loss: 1.477245569229126, Test Acc: 82.75%,Test Discrimination: 0.016369853168725967
+Epoch 57, Train Loss: 0.555031955242157, Train Acc: 82.66%, Train Discrimination: 1.0313720849808306e-05 Test Loss: 1.3424140214920044, Test Acc: 82.88%,Test Discrimination: 0.01418379507958889
+Epoch 58, Train Loss: 0.5494706034660339, Train Acc: 82.78%, Train Discrimination: 2.1201040567575546e-07 Test Loss: 1.2921582460403442, Test Acc: 82.91%,Test Discrimination: 0.013602794148027897
+Epoch 59, Train Loss: 0.5441387295722961, Train Acc: 82.96%, Train Discrimination: 4.386077125673182e-05 Test Loss: 1.2002079486846924, Test Acc: 82.94%,Test Discrimination: 0.012090937234461308
+Epoch 60, Train Loss: 0.5382333397865295, Train Acc: 82.97%, Train Discrimination: 7.675248525629286e-06 Test Loss: 1.1533699035644531, Test Acc: 83.01%,Test Discrimination: 0.011414957232773304
+Epoch 61, Train Loss: 0.5336291790008545, Train Acc: 82.88%, Train Discrimination: 1.3861312027074746e-06 Test Loss: 1.2151113748550415, Test Acc: 82.98%,Test Discrimination: 0.01291086245328188
+Epoch 62, Train Loss: 0.5291166305541992, Train Acc: 82.90%, Train Discrimination: 6.526482320623472e-05 Test Loss: 1.1653772592544556, Test Acc: 83.04%,Test Discrimination: 0.0120852030813694
+Epoch 63, Train Loss: 0.5240165591239929, Train Acc: 82.76%, Train Discrimination: 4.348344646132318e-06 Test Loss: 1.1964033842086792, Test Acc: 83.29%,Test Discrimination: 0.012983974069356918
+Epoch 64, Train Loss: 0.5189733505249023, Train Acc: 82.95%, Train Discrimination: 4.06902254326269e-05 Test Loss: 1.0838316679000854, Test Acc: 83.35%,Test Discrimination: 0.01095158327370882
+Epoch 65, Train Loss: 0.5137745141983032, Train Acc: 83.04%, Train Discrimination: 4.1675551898379126e-08 Test Loss: 1.0343509912490845, Test Acc: 83.61%,Test Discrimination: 0.010207772254943848
+Epoch 66, Train Loss: 0.5094195604324341, Train Acc: 83.16%, Train Discrimination: 2.6484041882213205e-05 Test Loss: 0.9570425748825073, Test Acc: 83.64%,Test Discrimination: 0.008809830993413925
+Epoch 67, Train Loss: 0.5055661201477051, Train Acc: 83.15%, Train Discrimination: 4.04616366722621e-06 Test Loss: 0.9909486770629883, Test Acc: 83.86%,Test Discrimination: 0.009737719781696796
+Epoch 68, Train Loss: 0.5033428072929382, Train Acc: 83.31%, Train Discrimination: 9.606428648112342e-05 Test Loss: 0.8988428711891174, Test Acc: 83.58%,Test Discrimination: 0.00791251752525568
+Epoch 69, Train Loss: 0.5078108906745911, Train Acc: 83.18%, Train Discrimination: 0.00016399893502239138 Test Loss: 1.1021060943603516, Test Acc: 84.02%,Test Discrimination: 0.012495671398937702
+Epoch 70, Train Loss: 0.525585412979126, Train Acc: 83.61%, Train Discrimination: 0.0007948702550493181 Test Loss: 0.8282182812690735, Test Acc: 83.64%,Test Discrimination: 0.006742666941136122
+Epoch 71, Train Loss: 0.5039606094360352, Train Acc: 83.34%, Train Discrimination: 0.0002280757762491703 Test Loss: 0.8144513368606567, Test Acc: 83.89%,Test Discrimination: 0.006632653996348381
+Epoch 72, Train Loss: 0.48751363158226013, Train Acc: 83.49%, Train Discrimination: 1.1555933269846719e-05 Test Loss: 0.8771834373474121, Test Acc: 84.08%,Test Discrimination: 0.008109557442367077
+Epoch 73, Train Loss: 0.5013831853866577, Train Acc: 83.74%, Train Discrimination: 0.00043187206028960645 Test Loss: 0.7832282781600952, Test Acc: 84.02%,Test Discrimination: 0.006211674772202969
+Epoch 74, Train Loss: 0.481157124042511, Train Acc: 83.67%, Train Discrimination: 1.1442743925726973e-05 Test Loss: 0.7684154510498047, Test Acc: 83.99%,Test Discrimination: 0.005973204970359802
+Epoch 75, Train Loss: 0.48704633116722107, Train Acc: 83.62%, Train Discrimination: 0.00015960162272676826 Test Loss: 0.9038161635398865, Test Acc: 84.11%,Test Discrimination: 0.009107229299843311
+Epoch 76, Train Loss: 0.4827423691749573, Train Acc: 83.86%, Train Discrimination: 0.00025101209757849574 Test Loss: 0.844440221786499, Test Acc: 84.05%,Test Discrimination: 0.007919040508568287
+Epoch 77, Train Loss: 0.47325801849365234, Train Acc: 83.85%, Train Discrimination: 8.512281783623621e-05 Test Loss: 0.7099458575248718, Test Acc: 83.89%,Test Discrimination: 0.005035607144236565
+Epoch 78, Train Loss: 0.4788656234741211, Train Acc: 83.73%, Train Discrimination: 0.00017695823044050485 Test Loss: 0.7229729294776917, Test Acc: 84.05%,Test Discrimination: 0.005457676015794277
+Epoch 79, Train Loss: 0.46542054414749146, Train Acc: 83.84%, Train Discrimination: 2.8157503493275726e-06 Test Loss: 0.7528676986694336, Test Acc: 84.11%,Test Discrimination: 0.006232020445168018
+Epoch 80, Train Loss: 0.4708258807659149, Train Acc: 83.81%, Train Discrimination: 0.0002139747084584087 Test Loss: 0.6953473091125488, Test Acc: 84.05%,Test Discrimination: 0.005041742231696844
+Epoch 81, Train Loss: 0.4600912630558014, Train Acc: 83.81%, Train Discrimination: 9.967582315084655e-11 Test Loss: 0.6754117012023926, Test Acc: 83.89%,Test Discrimination: 0.004670294933021069
+Epoch 82, Train Loss: 0.4633500576019287, Train Acc: 83.73%, Train Discrimination: 9.539071470499039e-05 Test Loss: 0.7612380385398865, Test Acc: 83.92%,Test Discrimination: 0.006725351791828871
+Epoch 83, Train Loss: 0.456024706363678, Train Acc: 83.92%, Train Discrimination: 4.94365522172302e-05 Test Loss: 0.7638309597969055, Test Acc: 83.92%,Test Discrimination: 0.006897918414324522
+Epoch 84, Train Loss: 0.45604079961776733, Train Acc: 83.96%, Train Discrimination: 0.0001200683182105422 Test Loss: 0.6517820954322815, Test Acc: 83.83%,Test Discrimination: 0.0044163865968585014
+Epoch 85, Train Loss: 0.45163944363594055, Train Acc: 83.83%, Train Discrimination: 2.2032376364222728e-05 Test Loss: 0.6195765137672424, Test Acc: 83.77%,Test Discrimination: 0.003758012782782316
+Epoch 86, Train Loss: 0.44985491037368774, Train Acc: 83.77%, Train Discrimination: 2.726267121033743e-05 Test Loss: 0.6547641158103943, Test Acc: 83.89%,Test Discrimination: 0.004662782419472933
+Epoch 87, Train Loss: 0.44728314876556396, Train Acc: 83.82%, Train Discrimination: 6.0248872614465654e-05 Test Loss: 0.6544946432113647, Test Acc: 83.92%,Test Discrimination: 0.004742877092212439
+Epoch 88, Train Loss: 0.4450967013835907, Train Acc: 83.88%, Train Discrimination: 6.504591146949679e-05 Test Loss: 0.6115290522575378, Test Acc: 83.83%,Test Discrimination: 0.0038061051163822412
+Epoch 89, Train Loss: 0.4423922300338745, Train Acc: 83.84%, Train Discrimination: 1.5029850146675017e-05 Test Loss: 0.6300622820854187, Test Acc: 83.89%,Test Discrimination: 0.004305840469896793
+Epoch 90, Train Loss: 0.44006112217903137, Train Acc: 83.86%, Train Discrimination: 8.594597602495924e-06 Test Loss: 0.6947887539863586, Test Acc: 83.95%,Test Discrimination: 0.005898856557905674
+Epoch 91, Train Loss: 0.43969130516052246, Train Acc: 83.94%, Train Discrimination: 7.174794882303104e-05 Test Loss: 0.6260159611701965, Test Acc: 83.80%,Test Discrimination: 0.0043615191243588924
+Epoch 92, Train Loss: 0.43526676297187805, Train Acc: 83.95%, Train Discrimination: 3.628321792348288e-06 Test Loss: 0.5677086710929871, Test Acc: 83.80%,Test Discrimination: 0.0030321876984089613
+Epoch 93, Train Loss: 0.4352673888206482, Train Acc: 83.90%, Train Discrimination: 2.0909761587972753e-05 Test Loss: 0.5836467146873474, Test Acc: 83.80%,Test Discrimination: 0.0034746676683425903
+Epoch 94, Train Loss: 0.43207043409347534, Train Acc: 83.99%, Train Discrimination: 7.627435479662381e-06 Test Loss: 0.6017699837684631, Test Acc: 83.64%,Test Discrimination: 0.003975182306021452
+Epoch 95, Train Loss: 0.43172743916511536, Train Acc: 84.02%, Train Discrimination: 5.6273143854923546e-05 Test Loss: 0.5661624670028687, Test Acc: 83.77%,Test Discrimination: 0.0031671752221882343
+Epoch 96, Train Loss: 0.42878711223602295, Train Acc: 84.00%, Train Discrimination: 2.1105093139794917e-07 Test Loss: 0.5655755996704102, Test Acc: 83.89%,Test Discrimination: 0.0032055818010121584
+Epoch 97, Train Loss: 0.4277358949184418, Train Acc: 84.03%, Train Discrimination: 7.55599603508017e-06 Test Loss: 0.6209938526153564, Test Acc: 83.95%,Test Discrimination: 0.004590899217873812
+Epoch 98, Train Loss: 0.42664745450019836, Train Acc: 84.00%, Train Discrimination: 3.3408530725864694e-05 Test Loss: 0.5862168669700623, Test Acc: 83.89%,Test Discrimination: 0.003801785409450531
+Epoch 99, Train Loss: 0.42424747347831726, Train Acc: 83.99%, Train Discrimination: 1.6426238289568573e-06 Test Loss: 0.5501956939697266, Test Acc: 83.83%,Test Discrimination: 0.0029715769924223423
+Epoch 100, Train Loss: 0.4236089289188385, Train Acc: 84.07%, Train Discrimination: 8.231560059357435e-06 Test Loss: 0.5715388059616089, Test Acc: 83.86%,Test Discrimination: 0.0035419573541730642</code></pre>
+</div>
+</div>
+<div id="cell-9" class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objects <span class="im">as</span> go</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_metric(title, y_label, train_data, test_data):</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    epochs <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">101</span>))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> go.Figure()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Adding Train Line with Markers</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    fig.add_trace(go.Scatter(</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span>epochs, y<span class="op">=</span>train_data, mode<span class="op">=</span><span class="st">'lines+markers'</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">'Train'</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        line<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'RoyalBlue'</span>, width<span class="op">=</span><span class="dv">2</span>),</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        marker<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'RoyalBlue'</span>, size<span class="op">=</span><span class="dv">6</span>, line<span class="op">=</span><span class="bu">dict</span>(width<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'DarkSlateGrey'</span>))</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Adding Test Line with Markers</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    fig.add_trace(go.Scatter(</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span>epochs, y<span class="op">=</span>test_data, mode<span class="op">=</span><span class="st">'lines+markers'</span>,</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">'Test'</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        line<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'Crimson'</span>, width<span class="op">=</span><span class="dv">2</span>, dash<span class="op">=</span><span class="st">'dot'</span>),</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        marker<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'Crimson'</span>, size<span class="op">=</span><span class="dv">6</span>, line<span class="op">=</span><span class="bu">dict</span>(width<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'DarkSlateGrey'</span>))</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update Layout</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    fig.update_layout(</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span>{<span class="st">'text'</span>: title, <span class="st">'y'</span>:<span class="fl">0.9</span>, <span class="st">'x'</span>:<span class="fl">0.5</span>, <span class="st">'xanchor'</span>: <span class="st">'center'</span>, <span class="st">'yanchor'</span>: <span class="st">'top'</span>},</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>        xaxis_title<span class="op">=</span><span class="st">'Epoch'</span>,</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>        yaxis_title<span class="op">=</span>y_label,</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>        legend<span class="op">=</span><span class="bu">dict</span>(x<span class="op">=</span><span class="fl">0.1</span>, y<span class="op">=</span><span class="fl">1.1</span>, orientation<span class="op">=</span><span class="st">'h'</span>),</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>        font<span class="op">=</span><span class="bu">dict</span>(family<span class="op">=</span><span class="st">"Helvetica, Arial, sans-serif"</span>, size<span class="op">=</span><span class="dv">12</span>, color<span class="op">=</span><span class="st">"black"</span>),</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>        plot_bgcolor<span class="op">=</span><span class="st">'white'</span>,</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>        margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">40</span>, r<span class="op">=</span><span class="dv">40</span>, t<span class="op">=</span><span class="dv">40</span>, b<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gridlines and Axes styles</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    fig.update_xaxes(showline<span class="op">=</span><span class="va">True</span>, linewidth<span class="op">=</span><span class="dv">2</span>, linecolor<span class="op">=</span><span class="st">'black'</span>, gridcolor<span class="op">=</span><span class="st">'LightGrey'</span>)</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    fig.update_yaxes(showline<span class="op">=</span><span class="va">True</span>, linewidth<span class="op">=</span><span class="dv">2</span>, linecolor<span class="op">=</span><span class="st">'black'</span>, gridcolor<span class="op">=</span><span class="st">'LightGrey'</span>)</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>    fig.show()</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Training and Testing Loss"</span>, <span class="st">"Loss"</span>, train_losses, test_losses)</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Training and Testing Accuracy"</span>, <span class="st">"Accuracy (%)"</span>, train_accuracies, test_accuracies)</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Training and Testing Discrimination"</span>, <span class="st">"Discrimination"</span>, train_discriminations, test_discriminations)</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Training and Testing Fairness"</span>, <span class="st">"Fairness"</span>, train_fairness, test_fairness)</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+</div>
+<section id="bce-loss-fn" class="level2">
+<h2 class="anchored" data-anchor-id="bce-loss-fn">BCE Loss Fn</h2>
+<div id="cell-11" class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.optim <span class="im">as</span> optim</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BinaryClassifier(nn.Module):</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, input_size):</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>(BinaryClassifier, <span class="va">self</span>).<span class="fu">__init__</span>()</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc1 <span class="op">=</span> nn.Linear(input_size, <span class="dv">64</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc2 <span class="op">=</span> nn.Linear(<span class="dv">64</span>, <span class="dv">1</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.relu(<span class="va">self</span>.fc1(x))</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.sigmoid(<span class="va">self</span>.fc2(x))</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x.squeeze()</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom loss function|</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> discrimination_loss(output, target, sensitive_features, lambda_val<span class="op">=</span><span class="dv">100</span>, k<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    criterion <span class="op">=</span> nn.BCELoss()</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    standard_loss <span class="op">=</span> criterion(output, target)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    mask_unpriv <span class="op">=</span> (sensitive_features <span class="op">==</span> <span class="dv">0</span>)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    mask_priv <span class="op">=</span> (sensitive_features <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">#discrimination=torch.abs(prob_priv)</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    prob_unpriv <span class="op">=</span> torch.mean(output[mask_unpriv])</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    prob_priv <span class="op">=</span> torch.mean(output[mask_priv])</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    discrimination <span class="op">=</span> lambda_val<span class="op">*</span>(prob_priv <span class="op">-</span> prob_unpriv) <span class="op">**</span> k</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Handle cases where one group might be missing</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">#discrimination=torch.abs(prob_priv)</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    loss_val<span class="op">=</span>standard_loss</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss_val,discrimination.item() </span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_accuracy(predictions, targets):</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    predicted_classes <span class="op">=</span> (predictions <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">float</span>()</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (predicted_classes <span class="op">==</span> targets).<span class="bu">float</span>().mean()</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> torch.tensor(X_train_scaled).<span class="bu">float</span>()</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>targets <span class="op">=</span> torch.tensor(y_train).<span class="bu">float</span>().unsqueeze(<span class="dv">1</span>)</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Correctly preparing the sensitive features</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> <span class="fl">0.5</span>  <span class="co"># Adjust the threshold according to your specific case</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>sensitive_features <span class="op">=</span> torch.tensor((data[:, <span class="dv">1</span>].numpy() <span class="op">&gt;</span> threshold).astype(<span class="bu">float</span>)).<span class="bu">float</span>()</span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> torch.cat((data[:, :<span class="dv">1</span>], data[:, <span class="dv">2</span>:]), dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming similar preparation for test data</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> torch.tensor(X_test_scaled).<span class="bu">float</span>()</span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>test_targets <span class="op">=</span> torch.tensor(y_test).<span class="bu">float</span>().unsqueeze(<span class="dv">1</span>)</span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>test_sensitive_features <span class="op">=</span> torch.tensor((test_data[:, <span class="dv">1</span>].numpy() <span class="op">&gt;</span> threshold).astype(<span class="bu">float</span>)).<span class="bu">float</span>()</span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>test_features <span class="op">=</span> torch.cat((test_data[:, :<span class="dv">1</span>], test_data[:, <span class="dv">2</span>:]), dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> BinaryClassifier(features.shape[<span class="dv">1</span>])</span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optim.Adam(model.parameters(), lr<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>train_losses1, train_accuracies1, train_discriminations1,train_fairness1 <span class="op">=</span> [], [], [],[]</span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>test_losses1, test_accuracies1, test_discriminations1,test_fairness1 <span class="op">=</span> [], [], [],[]</span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Training loop</span></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>model.train()</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>    optimizer.zero_grad()</span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> model(features)</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>    loss, discrimination <span class="op">=</span> discrimination_loss(outputs, targets.squeeze(), sensitive_features)</span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>    train_accuracy <span class="op">=</span> calculate_accuracy(outputs, targets.squeeze())</span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>    loss.backward()</span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>    optimizer.step()</span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Evaluation on test data</span></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>    model.<span class="bu">eval</span>()</span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>        test_outputs <span class="op">=</span> model(test_features)</span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>        test_loss,test_discrimination <span class="op">=</span> discrimination_loss(test_outputs, test_targets.squeeze(), test_sensitive_features)</span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>        test_accuracy <span class="op">=</span> calculate_accuracy(test_outputs, test_targets.squeeze())</span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Epoch </span><span class="sc">{</span>epoch<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">, Train Loss: </span><span class="sc">{</span>loss<span class="sc">.</span>item()<span class="sc">}</span><span class="ss">, Train Acc: </span><span class="sc">{</span>train_accuracy<span class="sc">.</span>item()<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%, Train Discrimination: </span><span class="sc">{</span>discrimination<span class="sc">}</span><span class="ss"> '</span></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f'Test Loss: </span><span class="sc">{</span>test_loss<span class="sc">.</span>item()<span class="sc">}</span><span class="ss">, Test Acc: </span><span class="sc">{</span>test_accuracy<span class="sc">.</span>item()<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%,Test Discrimination: </span><span class="sc">{</span>test_discrimination<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>    train_losses1.append(loss.item())</span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>    train_accuracies1.append(train_accuracy.item() <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>    train_discriminations1.append(discrimination)</span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>    fairness<span class="op">=</span><span class="dv">1</span><span class="op">-</span>discrimination</span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a>    train_fairness1.append(fairness)</span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a>    test_fairness1.append(fairness)</span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a>    test_losses1.append(test_loss.item())</span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>    test_accuracies1.append(test_accuracy.item() <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a>    test_discriminations1.append(test_discrimination)</span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>    model.train()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1, Train Loss: 0.6893765330314636, Train Acc: 56.96%, Train Discrimination: 0.028892265632748604 Test Loss: 0.8665273189544678, Test Acc: 82.66%,Test Discrimination: 0.11413952708244324
+Epoch 2, Train Loss: 0.8494628667831421, Train Acc: 82.87%, Train Discrimination: 0.0646490603685379 Test Loss: 0.7340521812438965, Test Acc: 82.66%,Test Discrimination: 0.02978677488863468
+Epoch 3, Train Loss: 0.7180451154708862, Train Acc: 82.87%, Train Discrimination: 0.01662645861506462 Test Loss: 0.49305757880210876, Test Acc: 82.66%,Test Discrimination: 0.0008751878049224615
+Epoch 4, Train Loss: 0.4822317659854889, Train Acc: 82.87%, Train Discrimination: 0.0016992390155792236 Test Loss: 0.40948766469955444, Test Acc: 84.37%,Test Discrimination: 0.5070899724960327
+Epoch 5, Train Loss: 0.4052659273147583, Train Acc: 84.97%, Train Discrimination: 0.41889819502830505 Test Loss: 0.5344403386116028, Test Acc: 71.70%,Test Discrimination: 1.4629510641098022
+Epoch 6, Train Loss: 0.5349717736244202, Train Acc: 72.08%, Train Discrimination: 1.1699885129928589 Test Loss: 0.4432348310947418, Test Acc: 82.91%,Test Discrimination: 1.1179109811782837
+Epoch 7, Train Loss: 0.44207313656806946, Train Acc: 82.79%, Train Discrimination: 0.9448722004890442 Test Loss: 0.38032716512680054, Test Acc: 84.27%,Test Discrimination: 0.44283074140548706
+Epoch 8, Train Loss: 0.3749988079071045, Train Acc: 85.03%, Train Discrimination: 0.4019760489463806 Test Loss: 0.403175413608551, Test Acc: 83.48%,Test Discrimination: 0.15531465411186218
+Epoch 9, Train Loss: 0.3944748342037201, Train Acc: 83.99%, Train Discrimination: 0.1460663229227066 Test Loss: 0.4298821985721588, Test Acc: 83.10%,Test Discrimination: 0.08754545450210571
+Epoch 10, Train Loss: 0.4196593761444092, Train Acc: 83.64%, Train Discrimination: 0.08160459250211716 Test Loss: 0.42858901619911194, Test Acc: 83.16%,Test Discrimination: 0.08645991235971451
+Epoch 11, Train Loss: 0.41827115416526794, Train Acc: 83.73%, Train Discrimination: 0.07904145121574402 Test Loss: 0.405176043510437, Test Acc: 83.67%,Test Discrimination: 0.1285136193037033
+Epoch 12, Train Loss: 0.39585673809051514, Train Acc: 84.05%, Train Discrimination: 0.11706404387950897 Test Loss: 0.3776590824127197, Test Acc: 84.21%,Test Discrimination: 0.23645246028900146
+Epoch 13, Train Loss: 0.3701803684234619, Train Acc: 84.74%, Train Discrimination: 0.21740812063217163 Test Loss: 0.36462756991386414, Test Acc: 84.78%,Test Discrimination: 0.44214367866516113
+Epoch 14, Train Loss: 0.35978808999061584, Train Acc: 85.26%, Train Discrimination: 0.4071773886680603 Test Loss: 0.37136322259902954, Test Acc: 85.06%,Test Discrimination: 0.7065772414207458
+Epoch 15, Train Loss: 0.3690268397331238, Train Acc: 85.07%, Train Discrimination: 0.6450950503349304 Test Loss: 0.3793603777885437, Test Acc: 85.15%,Test Discrimination: 0.8762152194976807
+Epoch 16, Train Loss: 0.3783196806907654, Train Acc: 84.62%, Train Discrimination: 0.7950994968414307 Test Loss: 0.3731483221054077, Test Acc: 85.47%,Test Discrimination: 0.872829020023346
+Epoch 17, Train Loss: 0.37199270725250244, Train Acc: 84.83%, Train Discrimination: 0.7976083159446716 Test Loss: 0.3602275550365448, Test Acc: 85.63%,Test Discrimination: 0.7373597621917725
+Epoch 18, Train Loss: 0.35798850655555725, Train Acc: 85.40%, Train Discrimination: 0.6868329644203186 Test Loss: 0.35391145944595337, Test Acc: 85.15%,Test Discrimination: 0.558799147605896
+Epoch 19, Train Loss: 0.3501380681991577, Train Acc: 85.72%, Train Discrimination: 0.5334701538085938 Test Loss: 0.35717904567718506, Test Acc: 84.84%,Test Discrimination: 0.4125717878341675
+Epoch 20, Train Loss: 0.35183075070381165, Train Acc: 85.71%, Train Discrimination: 0.4035780727863312 Test Loss: 0.36388465762138367, Test Acc: 84.78%,Test Discrimination: 0.32251864671707153
+Epoch 21, Train Loss: 0.35740622878074646, Train Acc: 85.53%, Train Discrimination: 0.32156074047088623 Test Loss: 0.36761748790740967, Test Acc: 84.46%,Test Discrimination: 0.2813608944416046
+Epoch 22, Train Loss: 0.36062532663345337, Train Acc: 85.31%, Train Discrimination: 0.28369131684303284 Test Loss: 0.36592987179756165, Test Acc: 84.46%,Test Discrimination: 0.2781275808811188
+Epoch 23, Train Loss: 0.3590368628501892, Train Acc: 85.31%, Train Discrimination: 0.2813844382762909 Test Loss: 0.3602959215641022, Test Acc: 84.81%,Test Discrimination: 0.3062696158885956
+Epoch 24, Train Loss: 0.35391226410865784, Train Acc: 85.53%, Train Discrimination: 0.3087084889411926 Test Loss: 0.3541712462902069, Test Acc: 84.87%,Test Discrimination: 0.3615400195121765
+Epoch 25, Train Loss: 0.34844857454299927, Train Acc: 85.78%, Train Discrimination: 0.3611733019351959 Test Loss: 0.3506123423576355, Test Acc: 85.12%,Test Discrimination: 0.4371921122074127
+Epoch 26, Train Loss: 0.3456374704837799, Train Acc: 85.89%, Train Discrimination: 0.43151891231536865 Test Loss: 0.3504486382007599, Test Acc: 85.31%,Test Discrimination: 0.5199912190437317
+Epoch 27, Train Loss: 0.34624630212783813, Train Acc: 85.85%, Train Discrimination: 0.5065035820007324 Test Loss: 0.35205116868019104, Test Acc: 85.63%,Test Discrimination: 0.5924646258354187
+Epoch 28, Train Loss: 0.34839606285095215, Train Acc: 85.76%, Train Discrimination: 0.5701208114624023 Test Loss: 0.35275527834892273, Test Acc: 85.85%,Test Discrimination: 0.6370248794555664
+Epoch 29, Train Loss: 0.34930771589279175, Train Acc: 85.81%, Train Discrimination: 0.6082808971405029 Test Loss: 0.3512765169143677, Test Acc: 85.94%,Test Discrimination: 0.6456495523452759
+Epoch 30, Train Loss: 0.34765130281448364, Train Acc: 85.86%, Train Discrimination: 0.6136332750320435 Test Loss: 0.3484106957912445, Test Acc: 85.63%,Test Discrimination: 0.6203233599662781
+Epoch 31, Train Loss: 0.3443194031715393, Train Acc: 85.92%, Train Discrimination: 0.5881646871566772 Test Loss: 0.3460047245025635, Test Acc: 85.44%,Test Discrimination: 0.5660967826843262
+Epoch 32, Train Loss: 0.3411797285079956, Train Acc: 85.98%, Train Discrimination: 0.5363804697990417 Test Loss: 0.34660080075263977, Test Acc: 85.03%,Test Discrimination: 0.48366230726242065
+Epoch 33, Train Loss: 0.34083840250968933, Train Acc: 85.87%, Train Discrimination: 0.45925331115722656 Test Loss: 0.34859907627105713, Test Acc: 85.03%,Test Discrimination: 0.44366443157196045
+Epoch 34, Train Loss: 0.3422602415084839, Train Acc: 85.87%, Train Discrimination: 0.42211058735847473 Test Loss: 0.34842362999916077, Test Acc: 85.12%,Test Discrimination: 0.4580681324005127
+Epoch 35, Train Loss: 0.3420337736606598, Train Acc: 85.88%, Train Discrimination: 0.43511027097702026 Test Loss: 0.34670528769493103, Test Acc: 85.09%,Test Discrimination: 0.509789228439331
+Epoch 36, Train Loss: 0.34059980511665344, Train Acc: 85.91%, Train Discrimination: 0.4828766882419586 Test Loss: 0.34537655115127563, Test Acc: 85.25%,Test Discrimination: 0.5624973773956299
+Epoch 37, Train Loss: 0.3396434485912323, Train Acc: 86.03%, Train Discrimination: 0.5316358804702759 Test Loss: 0.3443288207054138, Test Acc: 85.34%,Test Discrimination: 0.6093973517417908
+Epoch 38, Train Loss: 0.338971883058548, Train Acc: 86.03%, Train Discrimination: 0.5730817317962646 Test Loss: 0.3436129689216614, Test Acc: 85.66%,Test Discrimination: 0.6492713093757629
+Epoch 39, Train Loss: 0.33865389227867126, Train Acc: 86.05%, Train Discrimination: 0.6067491769790649 Test Loss: 0.3431760370731354, Test Acc: 85.63%,Test Discrimination: 0.6723722219467163
+Epoch 40, Train Loss: 0.33838164806365967, Train Acc: 86.11%, Train Discrimination: 0.6271101236343384 Test Loss: 0.3427199125289917, Test Acc: 85.69%,Test Discrimination: 0.6735063195228577
+Epoch 41, Train Loss: 0.33782997727394104, Train Acc: 86.10%, Train Discrimination: 0.6293227076530457 Test Loss: 0.3422622084617615, Test Acc: 85.69%,Test Discrimination: 0.6547510027885437
+Epoch 42, Train Loss: 0.3370249271392822, Train Acc: 86.09%, Train Discrimination: 0.6146485209465027 Test Loss: 0.34194856882095337, Test Acc: 85.63%,Test Discrimination: 0.622936487197876
+Epoch 43, Train Loss: 0.336249977350235, Train Acc: 86.09%, Train Discrimination: 0.5883059501647949 Test Loss: 0.34171062707901, Test Acc: 85.41%,Test Discrimination: 0.587398111820221
+Epoch 44, Train Loss: 0.3356246054172516, Train Acc: 86.13%, Train Discrimination: 0.5576801896095276 Test Loss: 0.34146469831466675, Test Acc: 85.34%,Test Discrimination: 0.5568069815635681
+Epoch 45, Train Loss: 0.33514276146888733, Train Acc: 86.10%, Train Discrimination: 0.530700147151947 Test Loss: 0.3410678207874298, Test Acc: 85.34%,Test Discrimination: 0.538408100605011
+Epoch 46, Train Loss: 0.3346046209335327, Train Acc: 86.10%, Train Discrimination: 0.5130552053451538 Test Loss: 0.34082841873168945, Test Acc: 85.31%,Test Discrimination: 0.5392794609069824
+Epoch 47, Train Loss: 0.33392462134361267, Train Acc: 86.15%, Train Discrimination: 0.5127732157707214 Test Loss: 0.3406904935836792, Test Acc: 85.50%,Test Discrimination: 0.5777758359909058
+Epoch 48, Train Loss: 0.33346039056777954, Train Acc: 86.31%, Train Discrimination: 0.5492798089981079 Test Loss: 0.34042471647262573, Test Acc: 85.38%,Test Discrimination: 0.5883434414863586
+Epoch 49, Train Loss: 0.3329395651817322, Train Acc: 86.36%, Train Discrimination: 0.5596801042556763 Test Loss: 0.3402789533138275, Test Acc: 85.44%,Test Discrimination: 0.564018726348877
+Epoch 50, Train Loss: 0.3322851061820984, Train Acc: 86.31%, Train Discrimination: 0.5371590852737427 Test Loss: 0.34003692865371704, Test Acc: 85.38%,Test Discrimination: 0.5607860684394836
+Epoch 51, Train Loss: 0.33175668120384216, Train Acc: 86.32%, Train Discrimination: 0.5351575613021851 Test Loss: 0.3393281400203705, Test Acc: 85.28%,Test Discrimination: 0.5884456038475037
+Epoch 52, Train Loss: 0.33099010586738586, Train Acc: 86.36%, Train Discrimination: 0.563715934753418 Test Loss: 0.3385639786720276, Test Acc: 85.69%,Test Discrimination: 0.6353873014450073
+Epoch 53, Train Loss: 0.3303709924221039, Train Acc: 86.39%, Train Discrimination: 0.6094982624053955 Test Loss: 0.33810877799987793, Test Acc: 85.75%,Test Discrimination: 0.6539232134819031
+Epoch 54, Train Loss: 0.3297540247440338, Train Acc: 86.38%, Train Discrimination: 0.6278684139251709 Test Loss: 0.3378382623195648, Test Acc: 85.69%,Test Discrimination: 0.6449885368347168
+Epoch 55, Train Loss: 0.3290434181690216, Train Acc: 86.40%, Train Discrimination: 0.6200804114341736 Test Loss: 0.3376803994178772, Test Acc: 85.72%,Test Discrimination: 0.6379352807998657
+Epoch 56, Train Loss: 0.32844457030296326, Train Acc: 86.32%, Train Discrimination: 0.6120428442955017 Test Loss: 0.33716490864753723, Test Acc: 85.66%,Test Discrimination: 0.653712809085846
+Epoch 57, Train Loss: 0.3276909291744232, Train Acc: 86.36%, Train Discrimination: 0.6235107779502869 Test Loss: 0.33645111322402954, Test Acc: 85.69%,Test Discrimination: 0.6918460726737976
+Epoch 58, Train Loss: 0.32676252722740173, Train Acc: 86.43%, Train Discrimination: 0.6560997366905212 Test Loss: 0.3356865644454956, Test Acc: 85.66%,Test Discrimination: 0.7060287594795227
+Epoch 59, Train Loss: 0.3256959319114685, Train Acc: 86.44%, Train Discrimination: 0.666750431060791 Test Loss: 0.33536139130592346, Test Acc: 85.66%,Test Discrimination: 0.6983868479728699
+Epoch 60, Train Loss: 0.3248368799686432, Train Acc: 86.46%, Train Discrimination: 0.660330593585968 Test Loss: 0.33474215865135193, Test Acc: 85.88%,Test Discrimination: 0.7734810709953308
+Epoch 61, Train Loss: 0.3241473436355591, Train Acc: 86.55%, Train Discrimination: 0.7274165153503418 Test Loss: 0.3346967101097107, Test Acc: 85.88%,Test Discrimination: 0.7544864416122437
+Epoch 62, Train Loss: 0.3234710097312927, Train Acc: 86.51%, Train Discrimination: 0.7115174531936646 Test Loss: 0.3344646990299225, Test Acc: 85.85%,Test Discrimination: 0.7700434327125549
+Epoch 63, Train Loss: 0.3228937089443207, Train Acc: 86.51%, Train Discrimination: 0.7257398962974548 Test Loss: 0.3340303599834442, Test Acc: 85.88%,Test Discrimination: 0.836399495601654
+Epoch 64, Train Loss: 0.32239267230033875, Train Acc: 86.66%, Train Discrimination: 0.7845637202262878 Test Loss: 0.3344355523586273, Test Acc: 85.98%,Test Discrimination: 0.7675795555114746
+Epoch 65, Train Loss: 0.32194194197654724, Train Acc: 86.51%, Train Discrimination: 0.7250076532363892 Test Loss: 0.3336296081542969, Test Acc: 86.04%,Test Discrimination: 0.9147170186042786
+Epoch 66, Train Loss: 0.3215138018131256, Train Acc: 86.74%, Train Discrimination: 0.8539789319038391 Test Loss: 0.3339884281158447, Test Acc: 85.91%,Test Discrimination: 0.802850604057312
+Epoch 67, Train Loss: 0.3208818733692169, Train Acc: 86.61%, Train Discrimination: 0.7571476101875305 Test Loss: 0.33318930864334106, Test Acc: 86.07%,Test Discrimination: 0.8864215612411499
+Epoch 68, Train Loss: 0.32016313076019287, Train Acc: 86.69%, Train Discrimination: 0.8304963111877441 Test Loss: 0.33291688561439514, Test Acc: 86.10%,Test Discrimination: 0.9457162618637085
+Epoch 69, Train Loss: 0.31984007358551025, Train Acc: 86.77%, Train Discrimination: 0.8820505738258362 Test Loss: 0.33355897665023804, Test Acc: 85.85%,Test Discrimination: 0.8437219262123108
+Epoch 70, Train Loss: 0.319575697183609, Train Acc: 86.76%, Train Discrimination: 0.7928959131240845 Test Loss: 0.3325559198856354, Test Acc: 86.07%,Test Discrimination: 0.9743655323982239
+Epoch 71, Train Loss: 0.3189741373062134, Train Acc: 86.79%, Train Discrimination: 0.9075414538383484 Test Loss: 0.3324671685695648, Test Acc: 86.10%,Test Discrimination: 0.9538917541503906
+Epoch 72, Train Loss: 0.3184824287891388, Train Acc: 86.84%, Train Discrimination: 0.8906792998313904 Test Loss: 0.3328649699687958, Test Acc: 85.91%,Test Discrimination: 0.8971131443977356
+Epoch 73, Train Loss: 0.31828832626342773, Train Acc: 86.76%, Train Discrimination: 0.8422393202781677 Test Loss: 0.3321385085582733, Test Acc: 85.98%,Test Discrimination: 1.0253230333328247
+Epoch 74, Train Loss: 0.3179641366004944, Train Acc: 86.83%, Train Discrimination: 0.9551102519035339 Test Loss: 0.3323608338832855, Test Acc: 86.17%,Test Discrimination: 0.9427615404129028
+Epoch 75, Train Loss: 0.3174552321434021, Train Acc: 86.81%, Train Discrimination: 0.8845437169075012 Test Loss: 0.33224791288375854, Test Acc: 86.07%,Test Discrimination: 0.9520696401596069
+Epoch 76, Train Loss: 0.31711119413375854, Train Acc: 86.83%, Train Discrimination: 0.8933191299438477 Test Loss: 0.3318634033203125, Test Acc: 85.88%,Test Discrimination: 1.037575364112854
+Epoch 77, Train Loss: 0.3169209361076355, Train Acc: 86.77%, Train Discrimination: 0.9679976105690002 Test Loss: 0.33232301473617554, Test Acc: 86.07%,Test Discrimination: 0.933535099029541
+Epoch 78, Train Loss: 0.31655648350715637, Train Acc: 86.84%, Train Discrimination: 0.8780548572540283 Test Loss: 0.33179783821105957, Test Acc: 85.94%,Test Discrimination: 0.9951685667037964
+Epoch 79, Train Loss: 0.31612369418144226, Train Acc: 86.85%, Train Discrimination: 0.9319747686386108 Test Loss: 0.33166858553886414, Test Acc: 85.94%,Test Discrimination: 1.015641212463379
+Epoch 80, Train Loss: 0.3158622980117798, Train Acc: 86.94%, Train Discrimination: 0.9494182467460632 Test Loss: 0.3321272134780884, Test Acc: 86.01%,Test Discrimination: 0.9333077073097229
+Epoch 81, Train Loss: 0.31563952565193176, Train Acc: 86.97%, Train Discrimination: 0.8777487874031067 Test Loss: 0.3314824104309082, Test Acc: 85.98%,Test Discrimination: 1.0153406858444214
+Epoch 82, Train Loss: 0.31527379155158997, Train Acc: 86.88%, Train Discrimination: 0.9482680559158325 Test Loss: 0.33151355385780334, Test Acc: 86.07%,Test Discrimination: 0.9788159132003784
+Epoch 83, Train Loss: 0.3149093985557556, Train Acc: 86.96%, Train Discrimination: 0.9160862565040588 Test Loss: 0.33172643184661865, Test Acc: 86.01%,Test Discrimination: 0.9364306926727295
+Epoch 84, Train Loss: 0.3147119879722595, Train Acc: 87.07%, Train Discrimination: 0.8783939480781555 Test Loss: 0.33136454224586487, Test Acc: 86.01%,Test Discrimination: 1.008489727973938
+Epoch 85, Train Loss: 0.3145003914833069, Train Acc: 87.01%, Train Discrimination: 0.9396288394927979 Test Loss: 0.3317037522792816, Test Acc: 85.91%,Test Discrimination: 0.9213685989379883
+Epoch 86, Train Loss: 0.31423279643058777, Train Acc: 87.07%, Train Discrimination: 0.8646906614303589 Test Loss: 0.33114081621170044, Test Acc: 86.01%,Test Discrimination: 0.9889554381370544
+Epoch 87, Train Loss: 0.31390252709388733, Train Acc: 87.03%, Train Discrimination: 0.9235911965370178 Test Loss: 0.33105161786079407, Test Acc: 86.07%,Test Discrimination: 0.976599931716919
+Epoch 88, Train Loss: 0.31362399458885193, Train Acc: 87.01%, Train Discrimination: 0.9139345288276672 Test Loss: 0.33122849464416504, Test Acc: 85.88%,Test Discrimination: 0.9288054704666138
+Epoch 89, Train Loss: 0.3134077787399292, Train Acc: 87.01%, Train Discrimination: 0.8731881976127625 Test Loss: 0.33072996139526367, Test Acc: 86.01%,Test Discrimination: 0.9963604807853699
+Epoch 90, Train Loss: 0.3131285607814789, Train Acc: 87.00%, Train Discrimination: 0.9329630136489868 Test Loss: 0.3308558464050293, Test Acc: 86.04%,Test Discrimination: 0.9482054114341736
+Epoch 91, Train Loss: 0.312815397977829, Train Acc: 86.90%, Train Discrimination: 0.892885148525238 Test Loss: 0.3308136761188507, Test Acc: 85.94%,Test Discrimination: 0.9436584711074829
+Epoch 92, Train Loss: 0.3125527501106262, Train Acc: 86.96%, Train Discrimination: 0.8900060057640076 Test Loss: 0.3305400013923645, Test Acc: 85.98%,Test Discrimination: 0.983189582824707
+Epoch 93, Train Loss: 0.31234806776046753, Train Acc: 87.03%, Train Discrimination: 0.925059974193573 Test Loss: 0.33068811893463135, Test Acc: 85.85%,Test Discrimination: 0.9317584037780762
+Epoch 94, Train Loss: 0.31211480498313904, Train Acc: 87.07%, Train Discrimination: 0.8807531595230103 Test Loss: 0.3305257558822632, Test Acc: 85.72%,Test Discrimination: 0.9462864398956299
+Epoch 95, Train Loss: 0.3118909001350403, Train Acc: 87.07%, Train Discrimination: 0.8945513367652893 Test Loss: 0.3304610252380371, Test Acc: 85.72%,Test Discrimination: 0.956537663936615
+Epoch 96, Train Loss: 0.3116954267024994, Train Acc: 87.07%, Train Discrimination: 0.9055699110031128 Test Loss: 0.3307129740715027, Test Acc: 85.79%,Test Discrimination: 0.9164716005325317
+Epoch 97, Train Loss: 0.3114984929561615, Train Acc: 87.11%, Train Discrimination: 0.8730623722076416 Test Loss: 0.3305681347846985, Test Acc: 85.72%,Test Discrimination: 0.9634522795677185
+Epoch 98, Train Loss: 0.3112768530845642, Train Acc: 87.07%, Train Discrimination: 0.9169492721557617 Test Loss: 0.330710232257843, Test Acc: 85.72%,Test Discrimination: 0.9306386113166809
+Epoch 99, Train Loss: 0.3110225200653076, Train Acc: 87.11%, Train Discrimination: 0.8897609114646912 Test Loss: 0.33071762323379517, Test Acc: 85.75%,Test Discrimination: 0.9277322292327881
+Epoch 100, Train Loss: 0.31081321835517883, Train Acc: 87.15%, Train Discrimination: 0.8878940939903259 Test Loss: 0.33061498403549194, Test Acc: 85.69%,Test Discrimination: 0.9497249722480774</code></pre>
+</div>
+</div>
+<div id="cell-12" class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objects <span class="im">as</span> go</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_metric(title, y_label, train_data, test_data):</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    epochs <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">101</span>))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> go.Figure()</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Adding Train Line with Markers</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    fig.add_trace(go.Scatter(</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span>epochs, y<span class="op">=</span>train_data, mode<span class="op">=</span><span class="st">'lines+markers'</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">'Train'</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        line<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'RoyalBlue'</span>, width<span class="op">=</span><span class="dv">2</span>),</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        marker<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'RoyalBlue'</span>, size<span class="op">=</span><span class="dv">6</span>, line<span class="op">=</span><span class="bu">dict</span>(width<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'DarkSlateGrey'</span>))</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Adding Test Line with Markers</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    fig.add_trace(go.Scatter(</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span>epochs, y<span class="op">=</span>test_data, mode<span class="op">=</span><span class="st">'lines+markers'</span>,</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">'Test'</span>,</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>        line<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'Crimson'</span>, width<span class="op">=</span><span class="dv">2</span>, dash<span class="op">=</span><span class="st">'dot'</span>),</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>        marker<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'Crimson'</span>, size<span class="op">=</span><span class="dv">6</span>, line<span class="op">=</span><span class="bu">dict</span>(width<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'DarkSlateGrey'</span>))</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update Layout</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    fig.update_layout(</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span>{<span class="st">'text'</span>: title, <span class="st">'y'</span>:<span class="fl">0.9</span>, <span class="st">'x'</span>:<span class="fl">0.5</span>, <span class="st">'xanchor'</span>: <span class="st">'center'</span>, <span class="st">'yanchor'</span>: <span class="st">'top'</span>},</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>        xaxis_title<span class="op">=</span><span class="st">'Epoch'</span>,</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>        yaxis_title<span class="op">=</span>y_label,</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>        legend<span class="op">=</span><span class="bu">dict</span>(x<span class="op">=</span><span class="fl">0.1</span>, y<span class="op">=</span><span class="fl">1.1</span>, orientation<span class="op">=</span><span class="st">'h'</span>),</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>        font<span class="op">=</span><span class="bu">dict</span>(family<span class="op">=</span><span class="st">"Helvetica, Arial, sans-serif"</span>, size<span class="op">=</span><span class="dv">12</span>, color<span class="op">=</span><span class="st">"black"</span>),</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>        plot_bgcolor<span class="op">=</span><span class="st">'white'</span>,</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>        margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">40</span>, r<span class="op">=</span><span class="dv">40</span>, t<span class="op">=</span><span class="dv">40</span>, b<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gridlines and Axes styles</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>    fig.update_xaxes(showline<span class="op">=</span><span class="va">True</span>, linewidth<span class="op">=</span><span class="dv">2</span>, linecolor<span class="op">=</span><span class="st">'black'</span>, gridcolor<span class="op">=</span><span class="st">'LightGrey'</span>)</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>    fig.update_yaxes(showline<span class="op">=</span><span class="va">True</span>, linewidth<span class="op">=</span><span class="dv">2</span>, linecolor<span class="op">=</span><span class="st">'black'</span>, gridcolor<span class="op">=</span><span class="st">'LightGrey'</span>)</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>    fig.show()</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Training and Testing Loss"</span>, <span class="st">"Loss"</span>, train_losses1, test_losses1)</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Training and Testing Accuracy"</span>, <span class="st">"Accuracy (%)"</span>, train_accuracies1, test_accuracies1)</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Training and Testing Discrimination"</span>, <span class="st">"Discrimination"</span>, train_discriminations1, test_discriminations1)</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Training and Testing Fairness"</span>, <span class="st">"Fairness"</span>, train_fairness1, test_fairness1)</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+</div>
+<div id="cell-13" class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>plot_metric(<span class="st">"Disc Aware Model and Unaware Model Fairness"</span>, <span class="st">"Fairness"</span>, test_fairness, test_fairness1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Unable to display output for mime type(s): application/vnd.plotly.v1+json</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/srinivassundar98\.github\.io\/Ensuring-Fair-Play\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
