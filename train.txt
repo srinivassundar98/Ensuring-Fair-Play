@@ -1,0 +1,6 @@
+Data shape: (7756, 139)
+Features shape: (7756, 138), Labels shape: (7756,)
+Training completed with final loss: 3089.060480999004
+Training completed with final loss: 3089.060480999004
+Model saved to C:\Users\srinivas\AppData\Local\Temp\tmp52wae14q
+Processing complete.
