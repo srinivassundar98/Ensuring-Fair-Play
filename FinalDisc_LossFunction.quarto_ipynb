@@ -9,7 +9,7 @@
         "jupyter: python3\n",
         "---"
       ],
-      "id": "c7758289"
+      "id": "fc911e5e"
     },
     {
       "cell_type": "code",
@@ -35,7 +35,7 @@
         "# Scalers\n",
         "from sklearn.preprocessing import StandardScaler"
       ],
-      "id": "e7001874",
+      "id": "6796a1a0",
       "execution_count": null,
       "outputs": []
     },
@@ -45,7 +45,7 @@
       "source": [
         "dataset_orig_panel19_train = MEPSDataset19()"
       ],
-      "id": "61e7baad",
+      "id": "fd6ff4d7",
       "execution_count": null,
       "outputs": []
     },
@@ -60,7 +60,7 @@
         "privileged_groups = [{sens_attr: v} for v in\n",
         "                    dataset_orig_panel19_train.privileged_protected_attributes[sens_ind]]"
       ],
-      "id": "927d670e",
+      "id": "73a0d8e9",
       "execution_count": null,
       "outputs": []
     },
@@ -70,7 +70,7 @@
       "source": [
         "dataset_orig_panel19_train.feature_names[1]"
       ],
-      "id": "326d9996",
+      "id": "6d263452",
       "execution_count": null,
       "outputs": []
     },
@@ -110,7 +110,7 @@
         "unprivileged_val = 0.0\n",
         "privileged_val = 1.0"
       ],
-      "id": "71445292",
+      "id": "0554a335",
       "execution_count": null,
       "outputs": []
     },
@@ -202,7 +202,7 @@
         "    test_discriminations.append(test_discrimination)\n",
         "    model2.train()"
       ],
-      "id": "999a3d91",
+      "id": "5c78850e",
       "execution_count": null,
       "outputs": []
     },
@@ -214,7 +214,7 @@
         "\n",
         "#### LAMBDA < 1\n"
       ],
-      "id": "4ad2ce94"
+      "id": "aa9dcaf0"
     },
     {
       "cell_type": "code",
@@ -255,7 +255,7 @@
         "    test_discriminations3.append(test_discrimination)\n",
         "    model3.train()"
       ],
-      "id": "1752c072",
+      "id": "51518f13",
       "execution_count": null,
       "outputs": []
     },
@@ -265,7 +265,7 @@
       "source": [
         "#### LAMBDA = 1\n"
       ],
-      "id": "d8454dce"
+      "id": "5127fc95"
     },
     {
       "cell_type": "code",
@@ -306,7 +306,7 @@
         "    test_discriminations4.append(test_discrimination)\n",
         "    model4.train()"
       ],
-      "id": "a1679ecf",
+      "id": "674b3c3a",
       "execution_count": null,
       "outputs": []
     },
@@ -316,7 +316,7 @@
       "source": [
         "#### LAMBDA > 1\n"
       ],
-      "id": "94a6d69f"
+      "id": "cf612087"
     },
     {
       "cell_type": "code",
@@ -357,7 +357,7 @@
         "    test_discriminations5.append(test_discrimination)\n",
         "    model5.train()"
       ],
-      "id": "237f7d64",
+      "id": "43a2ce49",
       "execution_count": null,
       "outputs": []
     },
@@ -367,7 +367,7 @@
       "source": [
         "#### LAMBDA >> 1\n"
       ],
-      "id": "f0edb86e"
+      "id": "44af732d"
     },
     {
       "cell_type": "code",
@@ -408,7 +408,7 @@
         "    test_discriminations6.append(test_discrimination)\n",
         "    model6.train()"
       ],
-      "id": "87579bf0",
+      "id": "632d3a74",
       "execution_count": null,
       "outputs": []
     },
@@ -420,7 +420,7 @@
         "\n",
         "### K=2\n"
       ],
-      "id": "baaa70cd"
+      "id": "ef6328e6"
     },
     {
       "cell_type": "code",
@@ -461,7 +461,7 @@
         "    test_discriminations7.append(test_discrimination)\n",
         "    model7.train()\n"
       ],
-      "id": "25ccaae5",
+      "id": "e1e905bf",
       "execution_count": null,
       "outputs": []
     },
@@ -471,7 +471,7 @@
       "source": [
         "### K=3\n"
       ],
-      "id": "3b16d6ba"
+      "id": "f18be1f0"
     },
     {
       "cell_type": "code",
@@ -512,7 +512,7 @@
         "    test_discriminations8.append(test_discrimination)\n",
         "    model8.train()\n"
       ],
-      "id": "b9e315f3",
+      "id": "c28a5b7a",
       "execution_count": null,
       "outputs": []
     },
@@ -522,7 +522,7 @@
       "source": [
         "#### MODEL ACCROSS DIFFERENT VALUES OF LAMBDA\n"
       ],
-      "id": "88f76179"
+      "id": "b43952eb"
     },
     {
       "cell_type": "code",
@@ -587,7 +587,7 @@
         "\n",
         "    fig.show()"
       ],
-      "id": "8f8ead2e",
+      "id": "c24b1a84",
       "execution_count": null,
       "outputs": []
     },
@@ -599,7 +599,7 @@
         "plot_comp_metric(\"TEST_Discriminations\", \"Discrimination\", test_discriminations3, test_discriminations4, test_discriminations5, test_discriminations6)\n",
         "plot_comp_metric(\"TEST_Losses\", \"Losses\", test_losses3,test_losses4,test_losses5,test_losses6)"
       ],
-      "id": "170c1578",
+      "id": "bd9772fb",
       "execution_count": null,
       "outputs": []
     },
@@ -609,7 +609,7 @@
       "source": [
         "#### MODEL ACCROSS DIFFERENT VALUES OF K\n"
       ],
-      "id": "146911c9"
+      "id": "47e62bb7"
     },
     {
       "cell_type": "code",
@@ -658,7 +658,7 @@
         "\n",
         "    fig.show()"
       ],
-      "id": "5d4f4f42",
+      "id": "8cd92f9e",
       "execution_count": null,
       "outputs": []
     },
@@ -670,7 +670,7 @@
         "plot_comp_metric_k(\"TEST_Discriminations\", \"Discrimination\", test_discriminations7, test_discriminations8)\n",
         "plot_comp_metric_k(\"TEST_Losses\", \"Losses\", test_losses7,test_losses8)"
       ],
-      "id": "c64b1605",
+      "id": "6385ff65",
       "execution_count": null,
       "outputs": []
     },
@@ -680,7 +680,7 @@
       "source": [
         "#### LOSS ACCURACY AND DISCRIMINATION FOR MODEL WITH DISCRIMINATION FUNCTION\n"
       ],
-      "id": "58a0f586"
+      "id": "3a9a83bf"
     },
     {
       "cell_type": "code",
@@ -725,7 +725,7 @@
         "\n",
         "    fig.show()"
       ],
-      "id": "23ca9c60",
+      "id": "ae636153",
       "execution_count": null,
       "outputs": []
     },
@@ -739,7 +739,7 @@
         "plot_metric(\"Training and Testing Discrimination\", \"Discrimination\", train_discriminations, test_discriminations)\n",
         "plot_metric(\"Training and Testing Fairness\", \"Fairness\", train_fairness, test_fairness)"
       ],
-      "id": "f2438667",
+      "id": "5ea7c76e",
       "execution_count": null,
       "outputs": []
     },
@@ -749,7 +749,7 @@
       "source": [
         "## BCE Loss Fn\n"
       ],
-      "id": "e7c619b7"
+      "id": "9787239f"
     },
     {
       "cell_type": "code",
@@ -843,7 +843,7 @@
         "    test_discriminations1.append(test_discrimination)\n",
         "    model.train()"
       ],
-      "id": "0d937764",
+      "id": "70649115",
       "execution_count": null,
       "outputs": []
     },
@@ -897,7 +897,7 @@
         "plot_metric(\"Training and Testing Discrimination\", \"Discrimination\", train_discriminations1, test_discriminations1)\n",
         "plot_metric(\"Training and Testing Fairness\", \"Fairness\", train_fairness1, test_fairness1)"
       ],
-      "id": "c9a4216f",
+      "id": "e598ba84",
       "execution_count": null,
       "outputs": []
     },
@@ -907,7 +907,7 @@
       "source": [
         "plot_metric(\"DISPARITY IN FAIRNESS\", \"FAIRNESS\", test_fairness, test_fairness1, \"EPOCH\", \"WITH DISCRIMINATION FUNCTION\", \"BCE\")"
       ],
-      "id": "f81e9738",
+      "id": "e2dda5f0",
       "execution_count": null,
       "outputs": []
     }

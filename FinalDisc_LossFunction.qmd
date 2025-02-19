@@ -4,6 +4,10 @@ jupyter: python3
 ---
 
 ```{python}
+!pip install aif360
+```
+
+```{python}
 import pandas as pd
 from datetime import datetime, timedelta
 import numpy as np
